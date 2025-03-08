@@ -1,0 +1,248 @@
+﻿@inject NavigationManager NavigationManager
+
+<TopBar></TopBar>
+<aside class="sidebar @SidebarClass">
+    <div class="sidebar-header">
+        <div class="project-name">
+            <i class="bi bi-house-door-fill me-2"></i>
+            <span class="project-text">Stay Ease Pro</span>
+        </div>
+        <button class="toggle-btn header-toggle" @onclick="ToggleSidebar">
+            <i class="bi @(IsCollapsed ? "bi-list" : "bi-x-lg")"></i>
+        </button>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item dashboard-item">
+            <a class="nav-link @(IsActive("/dashboard") ? "active" : "")" href="/dashboard">
+                <i class="bi bi-speedometer2 me-2"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(IsActive("/properties") ? "active" : "")" href="/properties">
+                <i class="bi bi-building me-2"></i>
+                <span class="nav-text">Properties</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(IsActive("/tenants") ? "active" : "")" href="/tenants">
+                <i class="bi bi-people me-2"></i>
+                <span class="nav-text">Tenants</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(IsActive("/payments") ? "active" : "")" href="/payments">
+                <i class="bi bi-currency-dollar me-2"></i>
+                <span class="nav-text">Payments</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(IsActive("/maintenance") ? "active" : "")" href="/maintenance">
+                <i class="bi bi-tools me-2"></i>
+                <span class="nav-text">Maintenance</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(IsActive("/notices") ? "active" : "")" href="/notices">
+                <i class="bi bi-megaphone me-2"></i>
+                <span class="nav-text">Notices</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(IsActive("/reports") ? "active" : "")" href="/reports">
+                <i class="bi bi-bar-chart me-2"></i>
+                <span class="nav-text">Reports</span>
+            </a>
+        </li>
+        <li class="nav-item mt-auto">
+            <a class="nav-link @(IsActive("/settings") ? "active" : "")" href="/settings">
+                <i class="bi bi-gear me-2"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-danger @(IsActive("/logout") ? "active" : "")" href="/logout">
+                <i class="bi bi-box-arrow-right me-2"></i>
+                <span class="nav-text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+
+
+
+<style>
+    /* Sidebar Container */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 230px;
+        height: 100vh;
+        background: linear-gradient(to bottom, #ffffff 0%, #e6f0fa 100%);
+        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+        transition: width 0.3s ease;
+        overflow-y: auto;
+        z-index: 1000;
+        margin-top:70px;
+    }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+    .sidebar-header {
+        padding: 1rem 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e2e8f0;
+        background: #ffffff;
+    }
+
+    .project-name {
+        display: flex;
+        align-items: center;
+        color: #2b6cb0;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .project-text {
+        transition: opacity 0.3s ease, width 0.3s ease;
+    }
+
+    .sidebar.collapsed .project-text {
+        opacity: 0;
+        width: 0;
+        overflow: hidden;
+    }
+
+    .header-toggle {
+        background: transparent;
+        border: none;
+        color: #4299e1;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .header-toggle:hover {
+            transform: scale(1.1);
+            color: #2b6cb0;
+        }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.9rem 1.2rem;
+        color: #4a5568 !important;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .nav-link:hover {
+            background: #e6f0fa;
+            color: #2b6cb0 !important;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: #bee3f8;
+            color: #2b6cb0 !important;
+            font-weight: 600;
+            border-left: 4px solid #2b6cb0;
+        }
+
+        .nav-link i {
+            font-size: 1.3rem;
+            width: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover i {
+            transform: scale(1.1);
+        }
+
+    .nav-text {
+        margin-left: 10px;
+        transition: opacity 0.3s ease, width 0.3s ease;
+    }
+
+    .sidebar.collapsed .nav-text {
+        opacity: 0;
+        width: 0;
+        overflow: hidden;
+    }
+
+    .nav-item.mt-auto {
+        margin-top: auto;
+    }
+
+    .nav-link.text-danger {
+        color: #e53e3e !important;
+    }
+
+        .nav-link.text-danger:hover {
+            background: #fefcbf;
+            color: #c53030 !important;
+        }
+
+    .main-content {
+        transition: margin-left 0.3s ease;
+        padding: 20px;
+        background: #f8fafc;
+    }
+
+    @@media (max-width: 768px) {
+        .sidebar {
+            width: 70px;
+        }
+
+        .main-content {
+            margin-left: 70px;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+            width: 0;
+            box-shadow: none;
+        }
+
+        .sidebar:not(.collapsed) {
+            width: 250px;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+
+@code {
+
+    private bool IsCollapsed { get; set; } = false;
+    private string CurrentRelativePath => NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+    private string SidebarClass => IsCollapsed ? "collapsed" : "";
+    private string MainContentStyle => IsCollapsed ? "margin-left: 70px;" : "margin-left: 250px;";
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += (s, e) => StateHasChanged();
+    }
+
+    private bool IsActive(string href) => ("/" + CurrentRelativePath) == href;
+
+    private void ToggleSidebar()
+    {
+        IsCollapsed = !IsCollapsed;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,160 @@
+/* Header Styling */
+.dashboard-header {
+    background: linear-gradient(to bottom, #ffffff 0%, #e6f0fa 100%); /* Light, vibrant gradient */
+    height: 70px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+    border-bottom: 1px solid #e0e7ff;
+    animation: slideIn 0.5s ease-out; /* Smooth entrance */
+}
+
+/* Brand Styling */
+.navbar-brand {
+    color: #2c5282 !important; /* Rich blue */
+    font-weight: 700;
+    font-size: 1.8rem; /* Slightly larger for prominence */
+    transition: transform 0.3s ease;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Depth effect */
+}
+
+    .navbar-brand:hover {
+        transform: scale(1.05); /* Subtle zoom on hover */
+    }
+
+/* Dropdown Toggle Styling */
+.dropdown-toggle {
+    color: #2c5282 !important; /* Matches brand color */
+    font-weight: 500;
+    position: relative;
+}
+
+    .dropdown-toggle span {
+        position: relative;
+    }
+
+        .dropdown-toggle span::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #63b3ed; /* Light blue underline */
+            transition: width 0.3s ease;
+        }
+
+    .dropdown-toggle:hover span::after {
+        width: 100%; /* Underline expands on hover */
+    }
+
+    .dropdown-toggle:hover i {
+        color: #63b3ed; /* Icon color changes */
+        transform: scale(1.1); /* Slight icon zoom */
+    }
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+    background: #ffffff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow for depth */
+    animation: fadeIn 0.2s ease-out; /* Smooth dropdown appearance */
+}
+
+.dropdown-item {
+    color: #4a5568;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    .dropdown-item:hover {
+        background-color: #e6f0fa; /* Light blue hover effect */
+        color: #2b6cb0 !important;
+    }
+
+/* Notification Dropdown */
+.notification-dropdown {
+    width: 400px; /* Wide enough for table */
+    padding: 0;
+    border-radius: 10px;
+}
+
+.notification-table-wrapper {
+    max-height: 300px;
+    overflow-y: auto; /* Scrollable */
+    background: #f8fafc; /* Light background */
+}
+
+    .notification-table-wrapper table {
+        border-collapse: separate;
+        border-spacing: 0 8px; /* Space between rows */
+    }
+
+    .notification-table-wrapper tr {
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Card-like effect */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .notification-table-wrapper tr:hover {
+            transform: translateY(-2px); /* Lift on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+        }
+
+    .notification-table-wrapper td {
+        border: none;
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        vertical-align: middle;
+    }
+
+    .notification-table-wrapper .unread {
+        background: #ebf8ff; /* Light blue for unread notifications */
+    }
+
+.dropdown-header {
+    background: #63b3ed; /* Vibrant header */
+    color: white !important;
+    font-weight: 600;
+}
+
+.dropdown-footer {
+    padding: 8px;
+    background: #f8fafc; /* Light footer */
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .navbar-nav {
+        padding: 10px 0;
+    }
+}

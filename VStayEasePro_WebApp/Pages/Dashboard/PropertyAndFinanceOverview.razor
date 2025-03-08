@@ -1,0 +1,377 @@
+﻿@page "/dashboard-overview"
+@inject IJSRuntime JS
+
+<div class="dashboard-overview">
+    <div class="overview-container">
+        <!-- Property Overview with Pie Chart -->
+        <div class="overview-card property-overview">
+            <h4><i class="bi bi-building-fill"></i> Property Overview</h4>
+            <div class="chart-container">
+                <canvas id="propertyChart"></canvas>
+            </div>
+            <div class="d-flex stats @(isUpdated ? "updated" : "")">
+                <p><span class="label">Total:</span> @PropertyDataList.Total</p>
+                <p><span class="label">Occupied:</span> @PropertyDataList.OccupiedPercentage%</p>
+                <p><span class="label">Vacant:</span> @PropertyDataList.Vacant</p>
+            </div>
+        </div>
+
+        <!-- Financial Snapshot with Bar Chart -->
+        <div class="overview-card financial-snapshot">
+            <h4><i class="bi bi-currency-dollar"></i> Financial Snapshot</h4>
+            <div class="chart-container">
+                <canvas id="financialChart"></canvas>
+            </div>
+            <div class="d-flex stats @(isUpdated ? "updated" : "")">
+                <p><span class="label">Revenue:</span> $@FinancialDataList.Revenue.ToString("N0")</p>
+                <p><span class="label">Pending:</span> $@FinancialDataList.Pending.ToString("N0")</p>
+                <p><span class="label">Overdue:</span> $@FinancialDataList.Overdue.ToString("N0")</p>
+            </div>
+        </div>
+
+        <!-- Recently Joined Members -->
+        <div class="overview-card recent-members">
+            <h4><i class="bi bi-people-fill"></i> Recently Joined Members</h4>
+            <div class="search-filter">
+                <input type="text" placeholder="Search by name" @bind-value="searchTerm" @bind-value:event="oninput" class="search-input" />
+            </div>
+            <div class="members-grid">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Name</th>
+                            <th>Days Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var member in FilteredMembers)
+                        {
+                            <tr>
+                                <td>@member.MemberId</td>
+                                <td>@member.Name</td>
+                                <td>@((DateTime.Now - member.JoinDate).Days)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private PropertyData PropertyDataList { get; set; } = new() { Total = 50, OccupiedPercentage = 90, Vacant = 5 };
+    private FinancialData FinancialDataList { get; set; } = new() { Revenue = 10000, Pending = 2000, Overdue = 500 };
+    private System.Timers.Timer? RefreshTimer;
+    private bool isUpdated = false;
+
+    // Define MemberData class
+    public class MemberData
+    {
+        public int MemberId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public DateTime JoinDate { get; set; }
+    }
+
+    // Sample list of recently joined members
+    private List<MemberData> RecentMembers { get; set; } = new List<MemberData>
+    {
+        new MemberData { MemberId = 1, Name = "John Doe", JoinDate = DateTime.Now.AddDays(-5) },
+        new MemberData { MemberId = 2, Name = "Jane Smith", JoinDate = DateTime.Now.AddDays(-3) },
+        new MemberData { MemberId = 3, Name = "Alice Johnson", JoinDate = DateTime.Now.AddDays(-2) },
+        new MemberData { MemberId = 4, Name = "Bob Brown", JoinDate = DateTime.Now.AddDays(-1) },
+        new MemberData { MemberId = 5, Name = "Charlie Davis", JoinDate = DateTime.Now.AddDays(0) },
+           new MemberData { MemberId = 1, Name = "John Doe", JoinDate = DateTime.Now.AddDays(-5) },
+        new MemberData { MemberId = 2, Name = "Jane Smith", JoinDate = DateTime.Now.AddDays(-3) },
+        new MemberData { MemberId = 3, Name = "Alice Johnson", JoinDate = DateTime.Now.AddDays(-2) },
+        new MemberData { MemberId = 4, Name = "Bob Brown", JoinDate = DateTime.Now.AddDays(-1) },
+        new MemberData { MemberId = 5, Name = "Charlie Davis", JoinDate = DateTime.Now.AddDays(0) }
+    };
+
+    // Search term and filtered members list
+    private string searchTerm = "";
+    private IEnumerable<MemberData> FilteredMembers => string.IsNullOrEmpty(searchTerm)
+        ? RecentMembers
+        : RecentMembers.Where(m => m.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initializeCharts"); // Ensure Chart.js is loaded
+            await UpdateCharts();
+
+            // Start real-time data refresh every 10 seconds
+            RefreshTimer = new System.Timers.Timer(10000);
+            RefreshTimer.Elapsed += async (_, _) => await RefreshData();
+            RefreshTimer.AutoReset = true;
+            RefreshTimer.Start();
+        }
+    }
+
+    private async Task UpdateCharts()
+    {
+        await JS.InvokeVoidAsync("createPieChart", "propertyChart", new
+        {
+            labels = new[] { "Occupied", "Vacant" },
+            data = new[] { PropertyDataList.OccupiedPercentage, 100 - PropertyDataList.OccupiedPercentage },
+            colors = new[] { "#74b9ff", "#e9ecef" }
+        });
+
+        await JS.InvokeVoidAsync("createBarChart", "financialChart", new
+        {
+            labels = new[] { "Revenue", "Pending", "Overdue" },
+            data = new[] { FinancialDataList.Revenue, FinancialDataList.Pending, FinancialDataList.Overdue },
+            colors = new[] { "#55efc4", "#ffeaa7", "#ff8787" }
+        });
+    }
+
+    private async Task RefreshData()
+    {
+        PropertyDataList.OccupiedPercentage = Random.Shared.Next(85, 95);
+        PropertyDataList.Vacant = PropertyDataList.Total - (PropertyDataList.OccupiedPercentage * PropertyDataList.Total / 100);
+
+        FinancialDataList.Revenue = Math.Max(0, FinancialDataList.Revenue + Random.Shared.Next(-500, 1000));
+        FinancialDataList.Pending = Math.Max(0, FinancialDataList.Pending + Random.Shared.Next(-200, 500));
+        FinancialDataList.Overdue = Math.Max(0, FinancialDataList.Overdue + Random.Shared.Next(-100, 300));
+
+        isUpdated = true;
+        await UpdateCharts();
+        StateHasChanged();
+
+        await Task.Delay(500);
+        isUpdated = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        RefreshTimer?.Dispose();
+    }
+    public class PropertyData
+    {
+        public int Total { get; set; }
+        public int OccupiedPercentage { get; set; }
+        public int Vacant { get; set; }
+    }
+
+    public class FinancialData
+    {
+        public int Revenue { get; set; }
+        public int Pending { get; set; }
+        public int Overdue { get; set; }
+    }
+
+}
+
+<style>
+    /* Dashboard Container */
+    .dashboard-overview {
+        background: linear-gradient(135deg, #f0f2f5 0%, #e9ecef 100%);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.04);
+        max-width: 1500px;
+      
+        
+    }
+
+    .overview-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+    }
+
+    /* Overview Cards */
+    .overview-card {
+        flex: 1;
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        max-height:450px;
+     
+    }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .overview-card h4 {
+            font-size: 1.3rem;
+            color: #2d3436;
+            margin: 0 0 30px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .overview-card i {
+            margin-right: 8px;
+            font-size: 1.4rem;
+        }
+
+    /* Specific Card Styles */
+    .property-overview {
+        border-left: 4px solid #74b9ff;
+    }
+
+        .property-overview h4 i {
+            color: #74b9ff;
+        }
+
+    .financial-snapshot {
+        border-left: 4px solid #55efc4;
+    }
+
+        .financial-snapshot h4 i {
+            color: #55efc4;
+        }
+
+    /* Chart Container */
+    .chart-container {
+        position: relative;
+        height: 180px;
+        margin-bottom: 15px;
+    }
+
+    .stats {
+        margin-top: calc(5vh + 15px);
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        align-items: center; /* Optional */
+    }
+
+        .stats.updated p {
+            animation: fadeIn 0.5s ease;
+        }
+
+    /* Add styles for Recently Joined Members card */
+    .recent-members {
+        border-left: 4px solid #a29bfe; /* Light purple accent */
+    }
+
+        .recent-members h4 i {
+            color: #a29bfe;
+        }
+
+    /* Search Filter */
+    .search-filter {
+        margin-bottom: 15px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        color: #495057;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .search-input:focus {
+            border-color: #a29bfe;
+            box-shadow: 0 0 5px rgba(162, 155, 254, 0.5);
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #adb5bd;
+        }
+
+    /* Members Grid */
+    .members-grid {
+       
+          max-height: 250px; /* Fixed height for scrolling */
+         overflow-x: auto; /* Allow horizontal scroll if needed */
+        overflow-y: auto;
+        border: 1px solid #ccc; /* Optional: Adds a border */
+        border-radius: 5px;
+    }
+
+        .members-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .members-grid th,
+        .members-grid td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            
+        }
+
+        .members-grid th {
+           background-color: #f8f9fa;
+        font-weight: 600;
+        color: #2d3436;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        }
+
+        .members-grid tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .members-grid tr:hover {
+            background-color: #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .overview-container {
+            flex-direction: column;
+        }
+
+        .overview-card {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    }
+
+    /* Optional: Define the fadeIn animation */
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+    }
+
+        .stats .label {
+            font-weight: 600;
+            color: #2d3436;
+            margin-right: 5px;
+        }
+
+    /* Animation for Real-Time Updates */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .stats.updated p {
+        animation: fadeIn 0.5s ease;
+    }
+</style>
