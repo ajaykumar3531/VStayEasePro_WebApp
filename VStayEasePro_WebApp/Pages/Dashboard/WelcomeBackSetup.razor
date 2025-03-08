@@ -1,0 +1,229 @@
+﻿@page "/welcome-back"
+@using System.Timers
+
+<div class="welcome-back">
+    <div class="left-section">
+        <span class="emoji">@GetRoleEmoji()</span>
+        <div class="user-info">
+            <h2>@UserName</h2>
+            <p class="role">@UserRole</p>
+        </div>
+    </div>
+    <div class="right-section">
+        <h3>@GetGreeting(), <span class="time">@CurrentTime.ToString("hh:mm tt")</span></h3>
+        <p class="wish">@WishMessage</p>
+    </div>
+</div>
+
+<style>
+    /* Container */
+    .welcome-back {
+        background: linear-gradient(90deg, #f9fafc 0%, #e9f1f6 100%);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        width: 100%; /* Full width */
+        max-height: 150px; /* Smaller height */
+        margin: 15px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    /* Left Section */
+    .left-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .left-section .emoji {
+        font-size: 2rem;
+        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+    }
+
+    .user-info h2 {
+        font-size: 1.5rem;
+        color: #2d3748;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .user-info .role {
+        font-size: 0.9rem;
+        color: #718096;
+        margin: 2px 0 0;
+        font-weight: 500;
+    }
+
+    /* Right Section */
+    .right-section {
+        text-align: right;
+    }
+
+    .right-section h3 {
+        font-size: 1.3rem;
+        color: #2d3748;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    .right-section .time {
+        font-size: 1.1rem;
+        color: #63b3ed; /* Light blue */
+        font-weight: 600;
+    }
+
+    .right-section .wish {
+        font-size: 0.95rem;
+        color: #4a5568;
+        margin: 5px 0 0;
+        font-style: italic;
+    }
+
+    /* Background Decorative Elements */
+    .welcome-back::before {
+        content: '';
+        position: absolute;
+        top: -30px;
+        left: -30px;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(99, 179, 237, 0.2) 0%, rgba(99, 179, 237, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    .welcome-back::after {
+        content: '';
+        position: absolute;
+        bottom: -40px;
+        right: -40px;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(72, 187, 120, 0.2) 0%, rgba(72, 187, 120, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    /* Fade-in Animation */
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .welcome-back {
+        animation: fadeIn 0.5s ease;
+    }
+</style>
+
+@code {
+    private string UserName { get; set; } = "Alex Johnson"; // Replace with actual user data
+    private string UserRole { get; set; } = "Admin"; // Options: "Admin", "User", "Tenant"
+    private DateTime CurrentTime { get; set; } = DateTime.Now;
+    private string WishMessage { get; set; } = "Have a great day!";
+
+    private Timer RefreshTimer;
+
+    protected override void OnInitialized()
+    {
+        // Set role and name based on logic (demo: rotate roles)
+        UserRole = Random.Shared.Next(0, 3) switch
+        {
+            0 => "Admin",
+            1 => "User",
+            _ => "Tenant"
+        };
+        UserName = UserRole switch
+        {
+            "Admin" => "Admin Alex",
+            "User" => "User123",
+            "Tenant" => "Tenant Jane",
+            _ => "Guest"
+        };
+
+        UpdateWishMessage();
+
+        // Set up real-time refresh every 1 second for time and periodic wish update
+        RefreshTimer = new Timer(1000);
+        RefreshTimer.Elapsed += async (sender, e) => await UpdateTimeAndWish();
+        RefreshTimer.AutoReset = true;
+        RefreshTimer.Start();
+    }
+
+    private async Task UpdateTimeAndWish()
+    {
+        CurrentTime = DateTime.Now;
+
+        // Update wish message every 10 seconds (demo purposes)
+        if ((DateTime.Now.Second % 10) == 0)
+        {
+            UpdateWishMessage();
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateWishMessage()
+    {
+        WishMessage = UserRole switch
+        {
+            "Admin" => Random.Shared.Next(0, 3) switch
+            {
+                0 => "Lead with confidence today!",
+                1 => "Empower your team!",
+                _ => "Make impactful decisions!"
+            },
+            "User" => Random.Shared.Next(0, 3) switch
+            {
+                0 => "Enjoy a productive day!",
+                1 => "Stay on top of tasks!",
+                _ => "Have a smooth day ahead!"
+            },
+            "Tenant" => Random.Shared.Next(0, 3) switch
+            {
+                0 => "Wishing you a cozy day!",
+                1 => "Relax and enjoy home!",
+                _ => "Have a peaceful day!"
+            },
+            _ => "Have a great day!"
+        };
+    }
+
+
+
+    private string GetGreeting()
+    {
+        int hour = CurrentTime.Hour;
+
+        if (hour < 12)
+            return "Good Morning";
+        else if (hour < 17)
+            return "Good Afternoon";
+        else
+            return "Good Evening";
+    }
+
+    private string GetRoleEmoji()
+    {
+        string role = UserRole?.Trim() ?? string.Empty; // Handle null cases
+
+        if (role == "Admin")
+            return "👑"; // Crown for Admin
+        else if (role == "User")
+            return "🙋"; // Raising hand for User
+        else if (role == "Tenant")
+            return "🏠"; // House for Tenant
+        else
+            return "🌟"; // Star as default
+    }
+
+
+    public void Dispose()
+    {
+        RefreshTimer?.Dispose();
+    }
+}

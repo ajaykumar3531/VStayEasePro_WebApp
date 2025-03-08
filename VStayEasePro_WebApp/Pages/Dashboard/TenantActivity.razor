@@ -1,0 +1,271 @@
+﻿@page "/tenant-activity"
+@using System.Timers
+
+<div class="tenant-activity">
+    <div class="header">
+        <h3><i class="bi bi-people-fill"></i> Tenant Activity</h3>
+        <div class="search-filter">
+            <input type="text" placeholder="Search by name or unit..." @bind="SearchQuery" @bind:event="oninput" class="search-input" />
+            <i class="bi bi-search search-icon"></i>
+        </div>
+    </div>
+    <div class="activity-grid-container">
+        <table class="activity-grid">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-person"></i> Name</th>
+                    <th><i class="bi bi-house-door"></i> Unit</th>
+                    <th><i class="bi bi-activity"></i> Activity</th>
+                    <th><i class="bi bi-calendar-event"></i> Date</th>
+                    <th><i class="bi bi-telephone"></i> Contact</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var activity in FilteredActivities)
+                {
+                    <tr class="activity-row @(activity.IsNew ? "new" : "")" @onclick="() => ViewDetails(activity)">
+                        <td>@activity.Name</td>
+                        <td>@activity.Unit</td>
+                        <td>
+                            <i class="bi @(activity.Type == "MoveIn" ? "bi-box-arrow-in-right" : activity.Type == "LeaseExpiration" ? "bi-hourglass-split" : "bi-gear")"></i>
+                            @activity.Details
+                        </td>
+                        <td>@activity.Date.ToString("MMM dd, yyyy")</td>
+                        <td>@activity.Contact</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Container */
+    .tenant-activity {
+        background: linear-gradient(135deg, #f8fafc 0%, #e9f1f6 100%);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.04);
+        max-width: 1200px;
+        margin: 20px auto;
+    }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .header h3 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .header i {
+            color: #48bb78; /* Light green */
+            margin-right: 10px;
+            font-size: 1.6rem;
+        }
+
+    /* Search Filter */
+    .search-filter {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+        padding: 8px 35px 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        color: #4a5568;
+        background: #ffffff;
+        width: 250px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .search-input:focus {
+            border-color: #63b3ed;
+            box-shadow: 0 0 8px rgba(99, 179, 237, 0.3);
+            outline: none;
+        }
+
+    .search-icon {
+        position: absolute;
+        right: 10px;
+        color: #a0aec0;
+        font-size: 1rem;
+    }
+
+    /* Grid Container */
+    .activity-grid-container {
+        max-height: 400px; /* Vertical scroll limit */
+        overflow-y: auto;
+        overflow-x: hidden;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e0 #ffffff;
+    }
+
+        .activity-grid-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .activity-grid-container::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+
+        .activity-grid-container::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+    /* Grid Table */
+    .activity-grid {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .activity-grid th {
+            background: #edf2f7;
+            color: #4a5568;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 12px 15px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+            .activity-grid th i {
+                margin-right: 6px;
+                color: #718096;
+            }
+
+        .activity-grid td {
+            padding: 12px 15px;
+            font-size: 0.85rem;
+            color: #718096;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+    .activity-row {
+        transition: background 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
+    }
+
+        .activity-row:hover {
+            background: #f7fafc;
+            transform: translateY(-2px);
+        }
+
+        .activity-row td i {
+            margin-right: 6px;
+            color: #48bb78; /* Green for move-in */
+        }
+
+        .activity-row:nth-child(even) td i {
+            color: #ed8936; /* Orange for lease expiration */
+        }
+
+    /* New Row Animation */
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .activity-row.new {
+        animation: slideIn 0.5s ease;
+        background: #f0fff4; /* Light green highlight for new */
+    }
+</style>
+
+@code {
+    private string SearchQuery { get; set; } = string.Empty;
+
+    private List<TenantActivityData> TenantActivities { get; set; } = new()
+    {
+        new TenantActivityData { Name = "John Doe", Unit = "Unit 5", Details = "Moved in", Date = new DateTime(2024, 10, 1), Contact = "john@example.com", Type = "MoveIn", IsNew = false },
+        new TenantActivityData { Name = "Jane Smith", Unit = "Unit 10", Details = "Lease expiring", Date = new DateTime(2024, 10, 15), Contact = "jane@example.com", Type = "LeaseExpiration", IsNew = false },
+        new TenantActivityData { Name = "Mike Johnson", Unit = "Unit 3", Details = "Moved in", Date = new DateTime(2024, 10, 5), Contact = "mike@example.com", Type = "MoveIn", IsNew = false }
+    };
+
+    private List<TenantActivityData> FilteredActivities => TenantActivities
+        .Where(a => string.IsNullOrEmpty(SearchQuery) ||
+                    a.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    a.Unit.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+    private Timer RefreshTimer;
+
+    protected override void OnInitialized()
+    {
+        // Set up real-time refresh every 5 seconds
+        RefreshTimer = new Timer(5000);
+        RefreshTimer.Elapsed += async (sender, e) => await RefreshActivities();
+        RefreshTimer.AutoReset = true;
+        RefreshTimer.Start();
+    }
+
+    private async Task RefreshActivities()
+    {
+        // Simulate real-time update
+        var newActivity = new TenantActivityData
+            {
+                Name = $"Tenant {TenantActivities.Count + 1}",
+                Unit = $"Unit {Random.Shared.Next(1, 20)}",
+                Details = Random.Shared.Next(0, 3) switch { 0 => "Moved in", 1 => "Lease expiring", _ => "Maintenance requested" },
+                Date = DateTime.Now.AddDays(Random.Shared.Next(-10, 10)),
+                Contact = $"tenant{TenantActivities.Count + 1}@example.com",
+                Type = Random.Shared.Next(0, 3) switch { 0 => "MoveIn", 1 => "LeaseExpiration", _ => "Maintenance" },
+                IsNew = true
+            };
+        TenantActivities.Insert(0, newActivity); // Add to top
+        if (TenantActivities.Count > 15) TenantActivities.RemoveAt(TenantActivities.Count - 1); // Limit to 15
+
+        await InvokeAsync(StateHasChanged);
+        // Reset 'new' status after animation
+        await Task.Delay(1000);
+        newActivity.IsNew = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ViewDetails(TenantActivityData activity)
+    {
+        // Simulate navigation or popup
+        Console.WriteLine($"Viewing details for {activity.Name}: {activity.Details} in {activity.Unit}");
+    }
+
+    public class TenantActivityData
+    {
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public string Details { get; set; }
+        public DateTime Date { get; set; }
+        public string Contact { get; set; }
+        public string Type { get; set; }
+        public bool IsNew { get; set; }
+    }
+
+    public void Dispose()
+    {
+        RefreshTimer?.Dispose();
+    }
+}

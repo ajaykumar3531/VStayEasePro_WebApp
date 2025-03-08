@@ -1,0 +1,290 @@
+﻿@page "/mini-calendar-quick-actions"
+@using System.Timers
+
+<div class="dashboard-container">
+    <div class="mini-calendar">
+        <div class="header">
+            <h3><i class="bi bi-calendar-check"></i> Mini Calendar</h3>
+            <span class="current-date">@DateTime.Now.ToString("MMMM yyyy")</span>
+        </div>
+        <div class="event-list">
+            @foreach (var ev in CalendarEvents.Take(3))
+            {
+                <div class="event-card @(ev.IsNew ? "new" : "")">
+                    <div class="event-icon">
+                        <i class="bi @(ev.Type == "Inspection" ? "bi-binoculars-fill" : "bi-arrow-repeat")"></i>
+                    </div>
+                    <div class="event-details">
+                        <span class="date">@ev.Date.ToString("MMM dd")</span>
+                        <span class="description">@ev.Description</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="quick-actions">
+        <div class="header">
+            <h3><i class="bi bi-lightning-fill"></i> Quick Actions</h3>
+        </div>
+        <div class="action-list">
+            @foreach (var action in QuickActions)
+            {
+                <button class="action-button" @onclick="() => PerformAction(action)">
+                    <i class="bi @(action == "Add Property" ? "bi-house-heart-fill" : "bi-person-add")"></i>
+                    <span>@action</span>
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Container */
+    .dashboard-container {
+        display: flex ;
+        gap: 30px;
+        max-width: 1440px;
+        margin: 30px auto;
+        padding: 0 20px;
+        flex-wrap: wrap; /* Responsive */
+    }
+
+    /* Mini Calendar & Quick Actions */
+    .mini-calendar, .quick-actions {
+        background: linear-gradient(145deg, #f9fafc 0%, #e3f0ff 100%);
+        border-radius: 25px;
+        padding: 25px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        width: 100%;
+        max-width: 575px; /* Balanced width */
+        min-height: 250px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+        .mini-calendar:hover, .quick-actions:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .header h3 {
+            font-size: 1.6rem;
+            color: #1a202c;
+            margin: 0;
+            font-weight: 700;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+    .mini-calendar .header i {
+        color: #4299e1; /* Vibrant blue */
+        font-size: 1.7rem;
+    }
+
+    .quick-actions .header i {
+        color: #38a169; /* Vibrant green */
+        font-size: 1.7rem;
+    }
+
+    .current-date {
+        font-size: 0.9rem;
+        color: #718096;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    /* Event List (Mini Calendar) */
+    .event-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .event-card {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 14px;
+        padding: 12px 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+        .event-card:hover {
+            transform: translateX(6px);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+        }
+
+    .event-icon i {
+        font-size: 1.4rem;
+        color: #4299e1;
+        margin-right: 14px;
+    }
+
+    .event-details {
+        flex-grow: 1;
+    }
+
+        .event-details .date {
+            font-size: 1rem;
+            color: #2d3748;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .event-details .description {
+            font-size: 0.95rem;
+            color: #718096;
+        }
+
+    .event-card.new {
+        animation: slideIn 0.7s ease;
+        background: #f0fff4; /* Light green highlight */
+    }
+
+    /* Action List (Quick Actions) */
+    .action-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.97);
+        border: none;
+        border-radius: 14px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        color: #2d3748;
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .action-button:hover {
+            transform: translateY(-5px);
+            background: #ffffff;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .action-button i {
+            font-size: 1.4rem;
+            color: #38a169;
+            margin-right: 14px;
+        }
+
+    /* Animation */
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-25px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Decorative Elements */
+    .mini-calendar::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(66, 153, 225, 0.25) 0%, rgba(66, 153, 225, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    .quick-actions::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        left: -60px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(56, 161, 105, 0.2) 0%, rgba(56, 161, 105, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+</style>
+
+@code {
+    private List<CalendarEvent> CalendarEvents { get; set; } = new()
+    {
+        new CalendarEvent { Date = new DateTime(2025, 10, 15), Description = "Inspection", Type = "Inspection" },
+        new CalendarEvent { Date = new DateTime(2025, 10, 20), Description = "Renewal", Type = "Renewal" }
+    };
+
+    private List<string> QuickActions { get; set; } = new()
+    {
+        "Add Property",
+        "Add Tenant"
+    };
+
+    private Timer RefreshTimer;
+
+    protected override void OnInitialized()
+    {
+        // Set up real-time refresh every 4 seconds
+        RefreshTimer = new Timer(4000);
+        RefreshTimer.Elapsed += async (sender, e) => await RefreshEvents();
+        RefreshTimer.AutoReset = true;
+        RefreshTimer.Start();
+    }
+
+    private async Task RefreshEvents()
+    {
+        // Simulate real-time update for Mini Calendar
+        var newEvent = new CalendarEvent
+            {
+                Date = DateTime.Now.AddDays(Random.Shared.Next(1, 15)),
+                Description = Random.Shared.Next(0, 2) == 0 ? "Inspection" : "Renewal",
+                Type = Random.Shared.Next(0, 2) == 0 ? "Inspection" : "Renewal",
+                IsNew = true
+            };
+        CalendarEvents.Insert(0, newEvent); // Add to top
+        if (CalendarEvents.Count > 5) CalendarEvents.RemoveAt(CalendarEvents.Count - 1); // Limit to 5
+
+        await InvokeAsync(StateHasChanged);
+        // Reset 'new' status after animation
+        await Task.Delay(1000);
+        newEvent.IsNew = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void PerformAction(string action)
+    {
+        // Simulate action (replace with actual logic, e.g., navigation)
+        Console.WriteLine($"Action triggered: {action}");
+    }
+
+    public class CalendarEvent
+    {
+        public DateTime Date { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public bool IsNew { get; set; }
+    }
+
+    public void Dispose()
+    {
+        RefreshTimer?.Dispose();
+    }
+}
