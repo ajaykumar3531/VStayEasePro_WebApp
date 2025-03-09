@@ -57,7 +57,7 @@ applications rich UI for user stay more time with proper alignmnets width all an
 | |   - Room Details: (Same as above)            |   |
 | | [Add Floor +]                                |   |
 | |                                               |   |
-| | [Shared Bathrooms: Numeric Input]            |   |
+| |
 | | [Amenities: Multi-Select Checkbox]           |   |
 | |   - Meals [ ] Wi-Fi [ ] AC [ ] Cleaning      |   |
 | | [Description: Textarea]                      |   |
