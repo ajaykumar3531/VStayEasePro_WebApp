@@ -1,0 +1,303 @@
+﻿@page "/payment-status-pie-chart"
+@using System.Timers
+@using System.Drawing
+
+<div class="dashboard-container">
+    <div class="payment-status">
+        <div class="header">
+            <h3><i class="bi bi-pie-chart-fill"></i> Payment Status</h3>
+        </div>
+        <div class="pie-chart-container">
+            <svg width="200" height="200" viewBox="0 0 200 200" class="pie-chart">
+                @foreach (var slice in PieSlices)
+                {
+                    <path d="@slice.Path" fill="@slice.Color" stroke="#ffffff" stroke-width="2"
+                          class="pie-slice" @onmouseover="() => HighlightSlice(slice)" @onmouseout="ResetHighlight" />
+                }
+            </svg>
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="dot" style="background-color: #48bb78;"></span> Collected: $@Collected.ToString("N0")
+                </div>
+                <div class="legend-item">
+                    <span class="dot" style="background-color: #f6ad55;"></span> Overdue: $@Overdue.ToString("N0")
+                </div>
+                <div class="legend-item">
+                    <span class="dot" style="background-color: #63b3ed;"></span> Due Today: $@DueToday.ToString("N0")
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="action-hub">
+        <div class="header">
+            <h3><i class="bi bi-lightning-fill"></i> Action Hub</h3>
+        </div>
+        <div class="action-list">
+            @foreach (var action in Actions)
+            {
+                <button class="action-button" @onclick="() => PerformAction(action)">
+                    <i class="bi @(action == "Add Property" ? "bi-house-add-fill" : action == "Assign Task" ? "bi-person-check-fill" : "bi-envelope-fill")"></i>
+                    <span>@action</span>
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Container */
+    .dashboard-container {
+        display: flex;
+        gap: 30px;
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+        flex-wrap: wrap; /* Responsive */
+    }
+
+    /* Payment Status & Action Hub */
+    .payment-status, .action-hub {
+        background: linear-gradient(145deg, #f9fafc 0%, #e3f0ff 100%);
+        border-radius: 25px;
+        padding: 25px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        width: 100%;
+        max-width: 550px; /* Balanced width */
+        min-height: 300px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+        .payment-status:hover, .action-hub:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
+    /* Header */
+    .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+        .header h3 {
+            font-size: 1.6rem;
+            color: #1a202c;
+            margin: 0;
+            font-weight: 700;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+    .payment-status .header i {
+        color: #48bb78; /* Green for payments */
+        font-size: 1.7rem;
+    }
+
+    .action-hub .header i {
+        color: #4299e1; /* Blue for actions */
+        font-size: 1.7rem;
+    }
+
+    /* Pie Chart Container */
+    .pie-chart-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .pie-chart {
+        transform: rotate(-90deg); /* Start at top */
+    }
+
+    .pie-slice {
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+        .pie-slice:hover {
+            transform: scale(1.1);
+            opacity: 0.9;
+        }
+
+    /* Legend */
+    .legend {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+        color: #2d3748;
+        font-weight: 500;
+    }
+
+    .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 10px;
+        display: inline-block;
+    }
+
+    /* Action List */
+    .action-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.97);
+        border: none;
+        border-radius: 14px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        color: #2d3748;
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .action-button:hover {
+            transform: translateY(-5px);
+            background: #ffffff;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .action-button i {
+            font-size: 1.4rem;
+            color: #4299e1;
+            margin-right: 14px;
+        }
+
+    /* Decorative Elements */
+    .payment-status::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(72, 187, 120, 0.25) 0%, rgba(72, 187, 120, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    .action-hub::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        left: -60px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(66, 153, 225, 0.2) 0%, rgba(66, 153, 225, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+</style>
+
+@code {
+    private double Collected { get; set; } = 8000; // $8k
+    private double Overdue { get; set; } = 500;   // $500
+    private double DueToday { get; set; } = 1000; // $1k
+    private List<PieSlice> PieSlices { get; set; } = new();
+    private List<string> Actions { get; set; } = new() { "Add Property", "Assign Task", "Send Notice" };
+    private Timer RefreshTimer;
+
+    protected override void OnInitialized()
+    {
+        UpdatePieChart();
+
+        // Set up real-time refresh every 5 seconds
+        RefreshTimer = new Timer(5000);
+        RefreshTimer.Elapsed += async (sender, e) => await RefreshPayments();
+        RefreshTimer.AutoReset = true;
+        RefreshTimer.Start();
+    }
+
+    private void UpdatePieChart()
+    {
+        double total = Collected + Overdue + DueToday;
+        double collectedAngle = (Collected / total) * 360;
+        double overdueAngle = (Overdue / total) * 360;
+        double dueTodayAngle = (DueToday / total) * 360;
+
+        PieSlices.Clear();
+        double startAngle = 0;
+
+        // Collected Slice
+        PieSlices.Add(CreateSlice(startAngle, collectedAngle, "#48bb78")); // Green
+        startAngle += collectedAngle;
+
+        // Overdue Slice
+        PieSlices.Add(CreateSlice(startAngle, overdueAngle, "#f6ad55")); // Orange
+        startAngle += overdueAngle;
+
+        // Due Today Slice
+        PieSlices.Add(CreateSlice(startAngle, dueTodayAngle, "#63b3ed")); // Blue
+    }
+
+    private PieSlice CreateSlice(double startAngle, double sweepAngle, string color)
+    {
+        double radius = 90;
+        double centerX = 100;
+        double centerY = 100;
+
+        double startRad = startAngle * Math.PI / 180;
+        double endRad = (startAngle + sweepAngle) * Math.PI / 180;
+
+        double startX = centerX + radius * Math.Cos(startRad);
+        double startY = centerY + radius * Math.Sin(startRad);
+        double endX = centerX + radius * Math.Cos(endRad);
+        double endY = centerY + radius * Math.Sin(endRad);
+
+        bool largeArc = sweepAngle > 180 ? true : false;
+
+        string path = $"M {centerX},{centerY} L {startX},{startY} A {radius},{radius} 0 {(largeArc ? 1 : 0)},1 {endX},{endY} Z";
+        return new PieSlice { Path = path, Color = color };
+    }
+
+    private async Task RefreshPayments()
+    {
+        // Simulate real-time payment updates
+        Collected += Random.Shared.Next(0, 500); // Random increase
+        Overdue = Math.Max(0, Overdue - Random.Shared.Next(0, 200)); // Random decrease
+        DueToday += Random.Shared.Next(0, 300); // Random increase
+
+        UpdatePieChart();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void HighlightSlice(PieSlice slice)
+    {
+        // Optional: Add hover interaction logic if needed
+    }
+
+    private void ResetHighlight()
+    {
+        // Optional: Reset hover state
+    }
+
+    private void PerformAction(string action)
+    {
+        Console.WriteLine($"Action triggered: {action}");
+    }
+
+    public class PieSlice
+    {
+        public string Path { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+    }
+
+    public void Dispose()
+    {
+        RefreshTimer?.Dispose();
+    }
+}

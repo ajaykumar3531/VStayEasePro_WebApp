@@ -1,0 +1,634 @@
+﻿@page "/add-property/pg/step3"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+
+<div class="page-container">
+    <div class="form-container">
+        <div class="header">
+            <h2><i class="bi bi-house-add-fill"></i> Add Property (PG)</h2>
+            <div class="step-indicator">
+                <span class="step">1-2</span>
+                <span class="step active">3</span>
+            </div>
+        </div>
+        <EditForm Model="PropertyModel" OnValidSubmit="HandleSave" class="form-body">
+            <DataAnnotationsValidator />
+            <div class="form-layout">
+                <div class="form-section">
+                    <h3>Financial & Features</h3>
+                    <div class="form-group">
+                        <label for="pgType">Type of PG <span class="required">*</span></label>
+                        <InputSelect id="pgType" @bind-Value="PropertyModel.PGType" class="form-control">
+                            <option value="">Select PG type...</option>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="CoLiving">CoLiving</option>
+                        </InputSelect>
+                        <ValidationMessage For="() => PropertyModel.PGType" />
+                    </div>
+                    <div class="form-group">
+                        <label for="securityDeposit">Security Deposit per Guest <span class="required">*</span></label>
+                        <InputNumber id="securityDeposit" @bind-Value="PropertyModel.SecurityDeposit" class="form-control" ParsingErrorMessage="Please enter a valid amount." />
+                        <ValidationMessage For="() => PropertyModel.SecurityDeposit" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerName">Owner/Host Name <span class="required">*</span></label>
+                        <InputText id="ownerName" @bind-Value="PropertyModel.OwnerName" class="form-control" />
+                        <ValidationMessage For="() => PropertyModel.OwnerName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerContact">Owner/Host Contact <span class="required">*</span></label>
+                        <InputText id="ownerContact" @bind-Value="PropertyModel.OwnerContact" class="form-control" />
+                        <ValidationMessage For="() => PropertyModel.OwnerContact" />
+                    </div>
+                    <div class="form-group">
+                        <label for="squareFootage">Total Square Footage <span class="required">*</span></label>
+                        <InputNumber id="squareFootage" @bind-Value="PropertyModel.SquareFootage" class="form-control" ParsingErrorMessage="Please enter a valid number." />
+                        <ValidationMessage For="() => PropertyModel.SquareFootage" />
+                    </div>
+                    <div class="form-group">
+                        <label for="numberOfFloors">Number of Floors <span class="required">*</span></label>
+                        <InputNumber id="numberOfFloors" @bind-Value="PropertyModel.NumberOfFloors" class="form-control" @oninput="UpdateFloors" ParsingErrorMessage="Please enter a valid number." />
+                        <ValidationMessage For="() => PropertyModel.NumberOfFloors" />
+                    </div>
+
+                    <!-- Floor Configuration -->
+                    <div class="floor-config">
+                        <h4>Floor Configuration</h4>
+                        @for (int i = 0; i < PropertyModel.Floors.Count; i++)
+                        {
+                            var floor = PropertyModel.Floors[i];
+                            <div class="floor-section">
+                                <h5>Floor @(i + 1)</h5>
+                                <div class="form-group">
+                                    <label for="roomsFloor@(i)">Rooms on Floor @(i + 1) <span class="required">*</span></label>
+                                    <InputNumber  @bind-Value="floor.NumberOfRooms" class="form-control" @oninput="() => UpdateRooms(floor)" ParsingErrorMessage="Please enter a valid number." />
+                                    <ValidationMessage For="() => floor.NumberOfRooms" />
+                                </div>
+                                @foreach (var room in floor.Rooms)
+                                {
+                                    <div class="room-details">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Room Number <span class="required">*</span></label>
+                                                <InputText @bind-Value="room.RoomNumber" class="form-control" />
+                                                <ValidationMessage For="() => room.RoomNumber" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Share Type <span class="required">*</span></label>
+                                                <InputSelect @bind-Value="room.ShareType" class="form-control">
+                                                    <option value="">Select...</option>
+                                                    <option value="1">1 Share</option>
+                                                    <option value="2">2 Share</option>
+                                                    <option value="3">3 Share</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="() => room.ShareType" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Room Type <span class="required">*</span></label>
+                                                <InputSelect @bind-Value="room.RoomType" class="form-control">
+                                                    <option value="">Select...</option>
+                                                    <option value="AC">AC</option>
+                                                    <option value="Non-AC">Non-AC</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="() => room.RoomType" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Price <span class="required">*</span></label>
+                                                <InputNumber @bind-Value="room.Price" class="form-control" ParsingErrorMessage="Please enter a valid amount." />
+                                                <ValidationMessage For="() => room.Price" />
+                                            </div>
+                                            <button type="button" class="btn btn-remove" @onclick="() => RemoveRoom(floor, room)">✖</button>
+                                        </div>
+                                    </div>
+                                }
+                                <button type="button" class="btn btn-add" @onclick="() => AddRoom(floor)">+ Add Room</button>
+                            </div>
+                        }
+                        @if (PropertyModel.Floors.Count < PropertyModel.NumberOfFloors)
+                        {
+                            <button type="button" class="btn btn-add-floor" @onclick="AddFloor">+ Add Floor</button>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label>Amenities</label>
+                        <div class="amenities">
+                            <InputCheckbox @bind-Value="PropertyModel.HasMeals" /> Meals
+                            <InputCheckbox @bind-Value="PropertyModel.HasWiFi" /> Wi-Fi
+                            <InputCheckbox @bind-Value="PropertyModel.HasAC" /> AC
+                            <InputCheckbox @bind-Value="PropertyModel.HasCleaning" /> Cleaning
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <InputTextArea id="description" @bind-Value="PropertyModel.Description" class="form-control" rows="4" />
+                    </div>
+                    <div class="form-group">
+                        <label for="photos">Upload Photos</label>
+                        <InputFile id="photos" OnChange="HandleFileUpload" multiple class="form-control-file" />
+                        <div class="photo-preview">
+                            @foreach (var photo in PropertyModel.UploadedPhotos)
+                            {
+                                <span>@photo</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button" class="btn btn-back" @onclick="HandleBack">Back</button>
+                <button type="submit" class="btn btn-save" disabled="@(!IsFormValid)">Save Property</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<style>
+    /* Page Container */
+    .page-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f9fafc 0%, #e6f0ff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+    }
+
+    /* Form Container */
+    .form-container {
+        background: #ffffff;
+        border-radius: 30px;
+        padding: 35px;
+        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 1000px;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+        .form-container:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+        }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+        .header h2 {
+            font-size: 2.2rem;
+            color: #1a202c;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header i {
+            color: #4299e1;
+            font-size: 2.3rem;
+        }
+
+    /* Step Indicator */
+    .step-indicator {
+        display: flex;
+        gap: 15px;
+    }
+
+    .step {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #718096;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+        .step.active {
+            background: #4299e1;
+            color: #ffffff;
+        }
+
+    /* Form Layout */
+    .form-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-section h3 {
+        font-size: 1.6rem;
+        color: #2d3748;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+        .form-group label {
+            font-size: 1.1rem;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+    .required {
+        color: #e53e3e;
+        font-size: 1.3rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        font-size: 1rem;
+        color: #2d3748;
+        background: #f7fafc;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 10px rgba(66, 153, 225, 0.3);
+            outline: none;
+        }
+
+    .validation-message {
+        color: #e53e3e;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+
+    /* Floor Configuration */
+    .floor-config {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f7fafc;
+        border-radius: 15px;
+    }
+
+        .floor-config h4 {
+            font-size: 1.4rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+    .floor-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+        .floor-section h5 {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+    .room-details {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px dashed #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+    .btn-add, .btn-add-floor, .btn-remove {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-add {
+        background: #48bb78;
+        color: #ffffff;
+    }
+
+    .btn-add-floor {
+        background: #4299e1;
+        color: #ffffff;
+    }
+
+    .btn-remove {
+        background: #e53e3e;
+        color: #ffffff;
+        padding: 5px 10px;
+    }
+
+        .btn-add:hover, .btn-add-floor:hover, .btn-remove:hover {
+            transform: scale(1.05);
+        }
+
+    /* Amenities */
+    .amenities {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+        .amenities input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+    /* Footer */
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 35px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-back {
+        background: #e2e8f0;
+        color: #718096;
+    }
+
+    .btn-save {
+        background: #48bb78;
+        color: #ffffff;
+    }
+
+    .btn:disabled {
+        background: #cbd5e0;
+        color: #a0aec0;
+        cursor: not-allowed;
+    }
+
+    .btn:not(:disabled):hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-save:not(:disabled):hover {
+        background: #38a169;
+    }
+
+    /* Decorative Elements */
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(66, 153, 225, 0.25) 0%, rgba(66, 153, 225, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .form-container {
+            max-width: 90%;
+            padding: 25px;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+        }
+
+        .header i {
+            font-size: 2rem;
+        }
+
+        .step {
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+        }
+
+        .form-section h3 {
+            font-size: 1.4rem;
+        }
+
+        .form-row {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            font-size: 1rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .form-group label {
+            font-size: 1rem;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+@code {
+    private PropertyAddModel PropertyModel { get; set; } = new();
+
+    private bool IsFormValid => !string.IsNullOrEmpty(PropertyModel.PGType) &&
+                               PropertyModel.SecurityDeposit > 0 &&
+                               !string.IsNullOrEmpty(PropertyModel.OwnerName) &&
+                               !string.IsNullOrEmpty(PropertyModel.OwnerContact) &&
+                               PropertyModel.SquareFootage > 0 &&
+                               PropertyModel.NumberOfFloors > 0 &&
+                               PropertyModel.Floors.All(f => f.NumberOfRooms > 0 && f.Rooms.All(r => !string.IsNullOrEmpty(r.RoomNumber) &&
+                                                                                                  r.ShareType > 0 &&
+                                                                                                  !string.IsNullOrEmpty(r.RoomType) &&
+                                                                                                  r.Price > 0));
+
+    private void UpdateFloors(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int floors) && floors >= 0)
+        {
+            while (PropertyModel.Floors.Count < floors)
+            {
+                PropertyModel.Floors.Add(new FloorModel());
+            }
+            while (PropertyModel.Floors.Count > floors)
+            {
+                PropertyModel.Floors.RemoveAt(PropertyModel.Floors.Count - 1);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void UpdateRooms(FloorModel floor)
+    {
+        if (floor.NumberOfRooms >= 0)
+        {
+            while (floor.Rooms.Count < floor.NumberOfRooms)
+            {
+                floor.Rooms.Add(new RoomModel());
+            }
+            while (floor.Rooms.Count > floor.NumberOfRooms)
+            {
+                floor.Rooms.RemoveAt(floor.Rooms.Count - 1);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void AddFloor()
+    {
+        PropertyModel.Floors.Add(new FloorModel());
+        StateHasChanged();
+    }
+
+    private void AddRoom(FloorModel floor)
+    {
+        floor.Rooms.Add(new RoomModel());
+        floor.NumberOfRooms = floor.Rooms.Count;
+        StateHasChanged();
+    }
+
+    private void RemoveRoom(FloorModel floor, RoomModel room)
+    {
+        floor.Rooms.Remove(room);
+        floor.NumberOfRooms = floor.Rooms.Count;
+        StateHasChanged();
+    }
+
+    private void HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        PropertyModel.UploadedPhotos.Clear();
+        foreach (var file in e.GetMultipleFiles())
+        {
+            PropertyModel.UploadedPhotos.Add(file.Name);
+        }
+        StateHasChanged();
+    }
+
+    private void HandleBack()
+    {
+        Navigation.NavigateTo("/add-property/step1-2");
+    }
+
+    private void HandleSave()
+    {
+        // Save logic here (e.g., API call)
+        Navigation.NavigateTo("/dashboard"); // Replace with your dashboard route
+    }
+
+    public class PropertyAddModel
+    {
+        [Required(ErrorMessage = "Please select a PG type.")]
+        public string PGType { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Security deposit is required.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Security deposit must be greater than 0.")]
+        public double SecurityDeposit { get; set; }
+
+        [Required(ErrorMessage = "Owner/Host name is required.")]
+        public string OwnerName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Owner/Host contact is required.")]
+        public string OwnerContact { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Square footage is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Square footage must be greater than 0.")]
+        public int SquareFootage { get; set; }
+
+        [Required(ErrorMessage = "Number of floors is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Number of floors must be greater than 0.")]
+        public int NumberOfFloors { get; set; }
+
+        public List<FloorModel> Floors { get; set; } = new List<FloorModel>();
+
+        public bool HasMeals { get; set; }
+        public bool HasWiFi { get; set; }
+        public bool HasAC { get; set; }
+        public bool HasCleaning { get; set; }
+
+        public string Description { get; set; } = string.Empty;
+
+        public List<string> UploadedPhotos { get; set; } = new List<string>();
+    }
+
+    public class FloorModel
+    {
+        [Required(ErrorMessage = "Number of rooms is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Number of rooms must be greater than 0.")]
+        public int NumberOfRooms { get; set; }
+
+        public List<RoomModel> Rooms { get; set; } = new List<RoomModel>();
+    }
+
+    public class RoomModel
+    {
+        [Required(ErrorMessage = "Room number is required.")]
+        public string RoomNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Share type is required.")]
+        [Range(1, 3, ErrorMessage = "Share type must be 1, 2, or 3.")]
+        public int ShareType { get; set; }
+
+        [Required(ErrorMessage = "Room type is required.")]
+        public string RoomType { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Price is required.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+        public double Price { get; set; }
+    }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+}

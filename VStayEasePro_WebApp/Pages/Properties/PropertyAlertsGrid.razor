@@ -1,0 +1,411 @@
+﻿@page "/property-alerts-grid"
+@using System.Timers
+
+<div class="alerts-container">
+    <div class="header">
+        <h3><i class="bi bi-bell-fill"></i> Property Alerts</h3>
+        <div class="controls">
+            <select @bind="SelectedAlertType" class="alert-dropdown">
+                <option value="OverduePayments">Overdue Payments</option>
+                <option value="PaymentDone">Payment Done</option>
+                <option value="MaintenanceRequests">Maintenance Requests</option>
+            </select>
+            <div class="search-filter">
+                <input type="text" placeholder="Search by Unit/Tenant..." @bind="SearchQuery" @bind:event="oninput" class="search-input" />
+                <i class="bi bi-search search-icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <table class="alerts-grid">
+            <thead>
+                <tr>
+                    <th>Unit</th>
+                    @switch (SelectedAlertType)
+                    {
+                        case "OverduePayments":
+                            <th>Tenant</th>
+                            <th>Amount</th>
+                            <th>Days Late</th>
+                            <th>Actions</th>
+                            break;
+                        case "PaymentDone":
+                            <th>Tenant</th>
+                            <th>Amount</th>
+                            <th>Paid On</th>
+                            <th>Details</th>
+                            break;
+                        case "MaintenanceRequests":
+                            <th>Issue</th>
+                            <th>Status</th>
+                            <th>Reported On</th>
+                            <th>Actions</th>
+                            break;
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var alert in FilteredAlerts)
+                {
+                    <tr class="alert-row @(alert.IsNew ? "new" : "")">
+                        <td>@alert.Unit</td>
+                        @switch (SelectedAlertType)
+                        {
+                            case "OverduePayments":
+                                <td>@alert.Tenant</td>
+                                <td>$@alert.Amount.ToString("N0")</td>
+                                <td>@alert.DaysLate days</td>
+                                <td><button class="action-btn" @onclick="() => ShowDetails(alert)">Details</button></td>
+                                break;
+                            case "PaymentDone":
+                                <td>@alert.Tenant</td>
+                                <td>$@alert.Amount.ToString("N0")</td>
+                                <td>@alert.Date.ToString("MMM dd, yyyy")</td>
+                                <td><button class="action-btn" @onclick="() => ShowDetails(alert)">Details</button></td>
+                                break;
+                            case "MaintenanceRequests":
+                                <td>@alert.Issue</td>
+                                <td><span class="status @(alert.Status.ToLower())">@alert.Status</span></td>
+                                <td>@alert.Date.ToString("MMM dd, yyyy")</td>
+                                <td><button class="action-btn" @onclick="() => ShowDetails(alert)">@(alert.Status == "Pending" ? "Assign" : "Details")</button></td>
+                                break;
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Container */
+    .alerts-container {
+        background: linear-gradient(135deg, #f9fafc 0%, #e9f1f6 100%);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.04);
+        max-width: 1200px;
+        margin: 20px auto;
+    }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .header h3 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header i {
+            color: #48bb78; /* Light green */
+            font-size: 1.6rem;
+        }
+
+    /* Controls (Dropdown & Search) */
+    .controls {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .alert-dropdown {
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        color: #2d3748;
+        background: #ffffff;
+        cursor: pointer;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .alert-dropdown:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 8px rgba(66, 153, 225, 0.3);
+            outline: none;
+        }
+
+    .search-filter {
+        position: relative;
+    }
+
+    .search-input {
+        padding: 10px 35px 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        color: #4a5568;
+        background: #ffffff;
+        width: 220px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .search-input:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 8px rgba(66, 153, 225, 0.3);
+            outline: none;
+        }
+
+    .search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 1rem;
+    }
+
+    /* Grid Container */
+    .grid-container {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e0 #ffffff;
+    }
+
+        .grid-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .grid-container::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+
+        .grid-container::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+    /* Alerts Grid */
+    .alerts-grid {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .alerts-grid th {
+            background: #edf2f7;
+            color: #4a5568;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 12px 15px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+            .alerts-grid th i {
+        margin-right: 6px;
+        color: #718096;
+    }
+
+        .alerts-grid td {
+            padding: 12px 15px;
+            font-size: 0.85rem;
+            color: #718096;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+    .alert-row {
+        transition: background 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
+    }
+
+        .alert-row:hover {
+            background: #f7fafc;
+            transform: translateX(5px);
+        }
+
+    .status {
+        padding: 5px 12px;
+        border-radius: 14px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+        .status.pending {
+            background: #fed7e2;
+            color: #9b2c2c;
+        }
+
+        .status.in-progress {
+            background: #fefcbf;
+            color: #b7791f;
+        }
+
+        .status.resolved {
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+
+    .action-btn {
+        background: #4299e1;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+        .action-btn:hover {
+            background: #3182ce;
+            transform: scale(1.05);
+        }
+
+    /* New Alert Animation */
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .alert-row.new {
+        animation: slideIn 0.6s ease;
+        background: #f0fff4; /* Light green for new */
+    }
+
+    /* Decorative Element */
+    .alerts-container::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(229, 62, 62, 0.25) 0%, rgba(229, 62, 62, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+</style>
+
+@code {
+    private string SelectedAlertType { get; set; } = "OverduePayments";
+    private string SearchQuery { get; set; } = string.Empty;
+
+    private List<Alert> Alerts { get; set; } = new()
+    {
+        new Alert { Unit = "Unit 5", Tenant = "John Doe", Amount = 500, DaysLate = 3, Type = "OverduePayments", Date = DateTime.Now.AddDays(-3) },
+        new Alert { Unit = "Unit 10", Issue = "AC Failure", Status = "Pending", Type = "MaintenanceRequests", Date = DateTime.Now.AddDays(-1) }
+    };
+
+    private List<Alert> FilteredAlerts => Alerts
+        .Where(a => a.Type == SelectedAlertType &&
+                    (string.IsNullOrEmpty(SearchQuery) ||
+                     a.Unit.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                     (a.Tenant?.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                     (a.Issue?.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ?? false)))
+        .ToList();
+
+    private Timer RefreshTimer;
+
+    protected override void OnInitialized()
+    {
+        // Set up real-time refresh every 5 seconds
+        RefreshTimer = new Timer(5000);
+        RefreshTimer.Elapsed += async (sender, e) => await RefreshAlerts();
+        RefreshTimer.AutoReset = true;
+        RefreshTimer.Start();
+    }
+
+    private async Task RefreshAlerts()
+    {
+        // Simulate real-time update
+        var newAlert = SelectedAlertType switch
+        {
+            "OverduePayments" => new Alert
+                {
+                    Unit = $"Unit {Random.Shared.Next(1, 20)}",
+                    Tenant = $"Tenant {Alerts.Count + 1}",
+                    Amount = Random.Shared.Next(100, 1000),
+                    DaysLate = Random.Shared.Next(1, 10),
+                    Type = "OverduePayments",
+                    Date = DateTime.Now,
+                    IsNew = true
+                },
+            "PaymentDone" => new Alert
+                {
+                    Unit = $"Unit {Random.Shared.Next(1, 20)}",
+                    Tenant = $"Tenant {Alerts.Count + 1}",
+                    Amount = Random.Shared.Next(100, 1000),
+                    Type = "PaymentDone",
+                    Date = DateTime.Now,
+                    IsNew = true
+                },
+            "MaintenanceRequests" => new Alert
+                {
+                    Unit = $"Unit {Random.Shared.Next(1, 20)}",
+                    Issue = Random.Shared.Next(0, 3) switch
+                    {
+                        0 => "Leaky Pipe",
+                        1 => "Broken Window",
+                        _ => "AC Failure"
+                    },
+                    Status = Random.Shared.Next(0, 3) switch
+                    {
+                        0 => "Pending",
+                        1 => "In Progress",
+                        _ => "Resolved"
+                    },
+                    Type = "MaintenanceRequests",
+                    Date = DateTime.Now,
+                    IsNew = true
+                },
+            _ => null
+        };
+
+        if (newAlert != null)
+        {
+            Alerts.Insert(0, newAlert);
+            if (Alerts.Count > 10) Alerts.RemoveAt(Alerts.Count - 1); // Limit to 10
+
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(1000);
+            newAlert.IsNew = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void ShowDetails(Alert alert)
+    {
+        Console.WriteLine($"Showing details for {alert.Unit}: {alert.Type}");
+    }
+
+    public class Alert
+    {
+        public string Unit { get; set; } = string.Empty;
+        public string? Tenant { get; set; }
+        public double Amount { get; set; }
+        public int DaysLate { get; set; }
+        public string? Issue { get; set; }
+        public string? Status { get; set; }
+        public DateTime Date { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public bool IsNew { get; set; }
+    }
+
+    public void Dispose()
+    {
+        RefreshTimer?.Dispose();
+    }
+}

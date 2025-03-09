@@ -1,0 +1,692 @@
+﻿@page "/add-property/apartment/step3"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+
+<div class="page-container">
+    <div class="form-container">
+        <div class="header">
+            <h2><i class="bi bi-building-fill"></i> Add Property (Apartment)</h2>
+            <div class="step-indicator">
+                <span class="step">1-2</span>
+                <span class="step active">3</span>
+            </div>
+        </div>
+        <EditForm Model="ApartmentModel" OnValidSubmit="HandleSave" class="form-body">
+            <DataAnnotationsValidator />
+            <div class="form-layout">
+                <div class="form-section">
+                    <h3>Features & Units</h3>
+                    <div class="form-group">
+                        <label for="numberOfFloors">Number of Floors <span class="required">*</span></label>
+                        <InputNumber id="numberOfFloors" @bind-Value="ApartmentModel.NumberOfFloors" class="form-control" @oninput="UpdateFloors" ParsingErrorMessage="Please enter a valid number." />
+                        <ValidationMessage For="() => ApartmentModel.NumberOfFloors" />
+                    </div>
+
+                    <!-- Floor Configuration -->
+                    <div class="floor-config">
+                        <h4>Floor Configuration</h4>
+                        @for (int i = 0; i < ApartmentModel.Floors.Count; i++)
+                        {
+                            var floor = ApartmentModel.Floors[i];
+                            <div class="floor-section">
+                                <h5>Floor @(i + 1)</h5>
+                                <div class="form-group">
+                                    <label for="unitsFloor@(i)">Units on Floor @(i + 1) <span class="required">*</span></label>
+                                    <InputNumber @bind-Value="floor.NumberOfUnits" class="form-control" @oninput="() => UpdateUnits(floor)" ParsingErrorMessage="Please enter a valid number." />
+                                    <ValidationMessage For="() => floor.NumberOfUnits" />
+                                </div>
+                                @foreach (var unit in floor.Units)
+                                {
+                                    <div class="unit-details">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Unit Number <span class="required">*</span></label>
+                                                <InputText @bind-Value="unit.UnitNumber" class="form-control" />
+                                                <ValidationMessage For="() => unit.UnitNumber" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Unit Type <span class="required">*</span></label>
+                                                <InputSelect @bind-Value="unit.UnitType" class="form-control">
+                                                    <option value="">Select...</option>
+                                                    <option value="1BHK">1BHK</option>
+                                                    <option value="2BHK">2BHK</option>
+                                                    <option value="3BHK">3BHK</option>
+                                                    <option value="4BHK">4BHK</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="() => unit.UnitType" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Room Type <span class="required">*</span></label>
+                                                <InputSelect @bind-Value="unit.RoomType" class="form-control">
+                                                    <option value="">Select...</option>
+                                                    <option value="AC">AC</option>
+                                                    <option value="Non-AC">Non-AC</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="() => unit.RoomType" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Price per Month <span class="required">*</span></label>
+                                                <InputNumber @bind-Value="unit.PricePerMonth" class="form-control" ParsingErrorMessage="Please enter a valid amount." />
+                                                <ValidationMessage For="() => unit.PricePerMonth" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Occupancy Status <span class="required">*</span></label>
+                                                <InputSelect @bind-Value="unit.OccupancyStatus" class="form-control">
+                                                    <option value="">Select...</option>
+                                                    <option value="Vacant">Vacant</option>
+                                                    <option value="Occupied">Occupied</option>
+                                                    <option value="Reserved">Reserved</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="() => unit.OccupancyStatus" />
+                                            </div>
+                                            <button type="button" class="btn btn-remove" @onclick="() => RemoveUnit(floor, unit)">✖</button>
+                                        </div>
+                                    </div>
+                                }
+                                <button type="button" class="btn btn-add" @onclick="() => AddUnit(floor)">+ Add Unit</button>
+                            </div>
+                        }
+                        @if (ApartmentModel.Floors.Count < ApartmentModel.NumberOfFloors)
+                        {
+                            <button type="button" class="btn btn-add-floor" @onclick="AddFloor">+ Add Floor</button>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maintenanceFee">Maintenance Fee per Unit</label>
+                        <InputNumber id="maintenanceFee" @bind-Value="ApartmentModel.MaintenanceFee" class="form-control" ParsingErrorMessage="Please enter a valid amount." />
+                    </div>
+                    <div class="form-group">
+                        <label for="lastInspection">Last Inspection Date</label>
+                        <InputDate id="lastInspection" @bind-Value="ApartmentModel.LastInspectionDate" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Security Features</label>
+                        <div class="security-features">
+                            <InputCheckbox @bind-Value="ApartmentModel.HasCCTV" /> CCTV
+                            <InputCheckbox @bind-Value="ApartmentModel.HasGatedEntry" /> Gated Entry
+                            <InputCheckbox @bind-Value="ApartmentModel.HasIntercom" /> Intercom
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Amenities</label>
+                        <div class="amenities">
+                            <InputCheckbox @bind-Value="ApartmentModel.HasParking" /> Parking
+                            <InputCheckbox @bind-Value="ApartmentModel.HasPool" /> Pool
+                            <InputCheckbox @bind-Value="ApartmentModel.HasGym" /> Gym
+                            <InputCheckbox @bind-Value="ApartmentModel.HasElevator" /> Elevator
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <InputTextArea id="description" @bind-Value="ApartmentModel.Description" class="form-control" rows="4" />
+                    </div>
+                    <div class="form-group">
+                        <label for="photos">Upload Photos</label>
+                        <InputFile id="photos" OnChange="HandleFileUpload" multiple class="form-control-file" />
+                        <div class="photo-preview">
+                            @foreach (var photo in ApartmentModel.UploadedPhotos)
+                            {
+                                <span>@photo</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button" class="btn btn-back" @onclick="HandleBack">Back</button>
+                <button type="submit" class="btn btn-save" disabled="@(!IsFormValid)">Save Property</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<style>
+    /* Page Container */
+    .page-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f9fafc 0%, #e6f0ff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+
+    /* Form Container */
+    .form-container {
+        background: #ffffff;
+        border-radius: 35px;
+        padding: 40px;
+        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 1000px;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.6s ease-in-out;
+        border: 1px solid rgba(66, 153, 225, 0.1);
+    }
+
+        .form-container:hover {
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 35px;
+    }
+
+        .header h2 {
+            font-size: 2.4rem;
+            color: #1a202c;
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #1a202c, #4299e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header i {
+            color: #4299e1;
+            font-size: 2.5rem;
+            filter: drop-shadow(0 2px 4px rgba(66, 153, 225, 0.3));
+        }
+
+    /* Step Indicator */
+    .step-indicator {
+        display: flex;
+        gap: 18px;
+    }
+
+    .step {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #718096;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        border: 2px solid #d1d8e0;
+    }
+
+        .step.active {
+            background: #4299e1;
+            color: #ffffff;
+            border: 2px solid #3182ce;
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+        }
+
+    /* Form Layout */
+    .form-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .form-section h3 {
+        font-size: 1.8rem;
+        color: #2d3748;
+        margin-bottom: 25px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        background: linear-gradient(90deg, #2d3748, #718096);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Form Group */
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+        .form-group label {
+            font-size: 1.2rem;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+            letter-spacing: 0.2px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+    .required {
+        color: #e53e3e;
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        font-size: 1.1rem;
+        color: #2d3748;
+        background: #f9fbfc;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+    }
+
+        .form-control:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 12px rgba(66, 153, 225, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.03);
+            background: #ffffff;
+        }
+
+    .validation-message {
+        color: #e53e3e;
+        font-size: 0.95rem;
+        margin-top: 8px;
+        font-style: italic;
+    }
+
+    /* Floor Configuration */
+    .floor-config {
+        margin: 25px 0;
+        padding: 25px;
+        background: linear-gradient(135deg, #f7fafc 0%, #eef2ff 100%);
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+        .floor-config h4 {
+            font-size: 1.6rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+    .floor-section {
+        margin-bottom: 25px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(66, 153, 225, 0.1);
+    }
+
+        .floor-section h5 {
+            font-size: 1.3rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+    .unit-details {
+        margin: 15px 0;
+        padding: 15px;
+        border: 2px dashed #d1d8e0;
+        border-radius: 15px;
+        background: #f9fbfc;
+        transition: background 0.3s ease;
+    }
+
+        .unit-details:hover {
+            background: #f1f5f9;
+        }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 160px;
+        }
+
+    /* Buttons */
+    .btn-add, .btn-add-floor, .btn-remove {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-add {
+        background: #48bb78;
+        color: #ffffff;
+    }
+
+    .btn-add-floor {
+        background: #4299e1;
+        color: #ffffff;
+    }
+
+    .btn-remove {
+        background: #e53e3e;
+        color: #ffffff;
+        padding: 8px 12px;
+    }
+
+        .btn-add:hover, .btn-add-floor:hover, .btn-remove:hover {
+            transform: scale(1.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+    .btn-add:hover {
+        background: #38a169;
+    }
+
+    .btn-add-floor:hover {
+        background: #3182ce;
+    }
+
+    .btn-remove:hover {
+        background: #c53030;
+    }
+
+    /* Amenities & Security Features */
+    .amenities, .security-features {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+        padding: 10px 0;
+    }
+
+        .amenities input[type="checkbox"], .security-features input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: #4299e1;
+            transform: scale(1.2);
+        }
+
+    /* Footer */
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+    }
+
+    .btn {
+        padding: 14px 35px;
+        border: none;
+        border-radius: 20px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-back {
+        background: #e2e8f0;
+        color: #718096;
+    }
+
+    .btn-save {
+        background: #48bb78;
+        color: #ffffff;
+    }
+
+    .btn:disabled {
+        background: #cbd5e0;
+        color: #a0aec0;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .btn:not(:disabled):hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-save:not(:disabled):hover {
+        background: #38a169;
+    }
+
+    .btn-back:not(:disabled):hover {
+        background: #d1d8e0;
+    }
+
+    /* Decorative Elements */
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(66, 153, 225, 0.3) 0%, rgba(66, 153, 225, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .form-container {
+            max-width: 90%;
+            padding: 30px;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+        }
+
+        .header i {
+            font-size: 2.2rem;
+        }
+
+        .step {
+            width: 35px;
+            height: 35px;
+            font-size: 1.1rem;
+        }
+
+        .form-section h3 {
+            font-size: 1.5rem;
+        }
+
+        .form-row {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+
+        .btn-add, .btn-add-floor, .btn-remove {
+            padding: 8px 18px;
+            font-size: 0.95rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .form-group label {
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+@code {
+    private ApartmentAddModel ApartmentModel { get; set; } = new();
+
+    private bool IsFormValid => ApartmentModel.NumberOfFloors > 0 &&
+                               ApartmentModel.Floors.All(f => f.NumberOfUnits > 0 && f.Units.All(u => !string.IsNullOrEmpty(u.UnitNumber) &&
+                                                                                                   !string.IsNullOrEmpty(u.UnitType) &&
+                                                                                                   !string.IsNullOrEmpty(u.RoomType) &&
+                                                                                                   u.PricePerMonth > 0 &&
+                                                                                                   !string.IsNullOrEmpty(u.OccupancyStatus)));
+
+    private void UpdateFloors(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int floors) && floors >= 0)
+        {
+            while (ApartmentModel.Floors.Count < floors)
+            {
+                ApartmentModel.Floors.Add(new FloorModel());
+            }
+            while (ApartmentModel.Floors.Count > floors)
+            {
+                ApartmentModel.Floors.RemoveAt(ApartmentModel.Floors.Count - 1);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void UpdateUnits(FloorModel floor)
+    {
+        if (floor.NumberOfUnits >= 0)
+        {
+            while (floor.Units.Count < floor.NumberOfUnits)
+            {
+                floor.Units.Add(new UnitModel());
+            }
+            while (floor.Units.Count > floor.NumberOfUnits)
+            {
+                floor.Units.RemoveAt(floor.Units.Count - 1);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void AddFloor()
+    {
+        ApartmentModel.Floors.Add(new FloorModel());
+        StateHasChanged();
+    }
+
+    private void AddUnit(FloorModel floor)
+    {
+        floor.Units.Add(new UnitModel());
+        floor.NumberOfUnits = floor.Units.Count;
+        StateHasChanged();
+    }
+
+    private void RemoveUnit(FloorModel floor, UnitModel unit)
+    {
+        floor.Units.Remove(unit);
+        floor.NumberOfUnits = floor.Units.Count;
+        StateHasChanged();
+    }
+
+    private void HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        ApartmentModel.UploadedPhotos.Clear();
+        foreach (var file in e.GetMultipleFiles())
+        {
+            ApartmentModel.UploadedPhotos.Add(file.Name);
+        }
+        StateHasChanged();
+    }
+
+    private void HandleBack()
+    {
+        Navigation.NavigateTo("/add-property/step1-2");
+    }
+
+    private void HandleSave()
+    {
+        // Save logic here (e.g., API call)
+        Navigation.NavigateTo("/dashboard"); // Replace with your dashboard route
+    }
+
+    public class ApartmentAddModel
+    {
+        [Required(ErrorMessage = "Number of floors is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Number of floors must be greater than 0.")]
+        public int NumberOfFloors { get; set; }
+
+        public List<FloorModel> Floors { get; set; } = new List<FloorModel>();
+
+        public double MaintenanceFee { get; set; } // Optional
+
+        public DateTime? LastInspectionDate { get; set; } // Optional
+
+        public bool HasCCTV { get; set; }
+        public bool HasGatedEntry { get; set; }
+        public bool HasIntercom { get; set; }
+
+        public bool HasParking { get; set; }
+        public bool HasPool { get; set; }
+        public bool HasGym { get; set; }
+        public bool HasElevator { get; set; }
+
+        public string Description { get; set; } = string.Empty;
+
+        public List<string> UploadedPhotos { get; set; } = new List<string>();
+    }
+
+    public class FloorModel
+    {
+        [Required(ErrorMessage = "Number of units is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Number of units must be greater than 0.")]
+        public int NumberOfUnits { get; set; }
+
+        public List<UnitModel> Units { get; set; } = new List<UnitModel>();
+    }
+
+    public class UnitModel
+    {
+        [Required(ErrorMessage = "Unit number is required.")]
+        public string UnitNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Unit type is required.")]
+        public string UnitType { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Room type is required.")]
+        public string RoomType { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Price per month is required.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+        public double PricePerMonth { get; set; }
+
+        [Required(ErrorMessage = "Occupancy status is required.")]
+        public string OccupancyStatus { get; set; } = string.Empty;
+    }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+}

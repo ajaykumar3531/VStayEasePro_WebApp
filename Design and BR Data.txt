@@ -1,0 +1,191 @@
+ make it design more attractive and with light colors user need to stay more time while see in that design 
+i want design like that more attarive and powerfull 
+and design  for real time application make that design for above  like real time 
+applications rich UI for user stay more time with proper alignmnets width all and responsive is mandatory
+
++-----------------------------------------------------+
+| Add Property                                        |
+| [Step Indicator: 1 ○ 2 ○ 3]                        |
++-----------------------------------------------------+
+| Step 1: Category Selection                         |
+| +-----------------------------------------------+   |
+| | [Property Category: Dropdown]                  |   |
+| |   - Apartment                                  |   |
+| |   - Hostel                                     |   |
+| |   - PG (Paying Guest)                         |   |
+| +-----------------------------------------------+   |
+| [Back: Disabled]          [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (PG)                                   |
+| [Step Indicator: 1 ● 2 ○ 3]                        |
++-----------------------------------------------------+
+| Step 2: Basic Details                               |
+| +-----------------------------------------------+   |
+| | [PG Name]                                      |   |
+| | [Address Line 1]                               |   |
+| | [Address Line 2]                               |   |
+| | [City] [State] [Zip Code]                     |   |
+| | [Total Guests: Numeric Input]                 |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (PG)                                   |
+| [Step Indicator: 1 ● 2 ● 3]                        |
++-----------------------------------------------------+
+| Step 3: Financial & Features                        |
+| +-----------------------------------------------+   |
+| | [Rent per Guest (Base): Currency Input]       |   |
+| | [Security Deposit per Guest: Currency Input] |   |
+| | [Owner/Host Name]                            |   |
+| | [Owner/Host Contact: Email/Phone]            |   |
+| | [Total Square Footage: Numeric Input]        |   |
+| | [Number of Floors: Numeric Input]            |   |
+| |                                               |   |
+| | Floor Configuration:                         |   |
+| | [Floor 1]                                    |   |
+| |   - [Rooms on Floor 1: Numeric Input]        |   |
+| |   - Room Details:                            |   |
+| |     [Room Number] [Share Type: Dropdown]     |   |
+| |     [Room Type: Dropdown] [Price: Currency]  |   |
+| |     [Add Room +] (Repeats per room)          |   |
+| | [Floor 2] (Repeats for each floor)           |   |
+| |   - [Rooms on Floor 2: Numeric Input]        |   |
+| |   - Room Details: (Same as above)            |   |
+| | [Add Floor +]                                |   |
+| |                                               |   |
+| | [Shared Bathrooms: Numeric Input]            |   |
+| | [Amenities: Multi-Select Checkbox]           |   |
+| |   - Meals [ ] Wi-Fi [ ] AC [ ] Cleaning      |   |
+| | [Description: Textarea]                      |   |
+| | [Upload Photos: File Input]                  |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Save Property]         |
++-----------------------------------------------------+
+
+
++-----------------------------------------------------+
+| Add Property                                        |
+| [Step Indicator: 1 ○ 2 ○ 3 ○ 4]                    |
++-----------------------------------------------------+
+| Step 1: Category Selection                         |
+| +-----------------------------------------------+   |
+| | [Property Category: Dropdown]                  |   |
+| |   - Apartment                                  |   |
+| |   - Hostel                                     |   |
+| |   - PG (Paying Guest)                         |   |
+| +-----------------------------------------------+   |
+| [Back: Disabled]          [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (Apartment)                            |
+| [Step Indicator: 1 ● 2 ○ 3 ○ 4]                    |
++-----------------------------------------------------+
+| Step 2: Basic Details                               |
+| +-----------------------------------------------+   |
+| | [Property Name]                                 |   |
+| | [Address Line 1]                               |   |
+| | [Address Line 2]                               |   |
+| | [City] [State] [Zip Code]                     |   |
+| | [Total Units: Numeric Input]                  |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (Apartment)                            |
+| [Step Indicator: 1 ● 2 ● 3 ○ 4]                    |
++-----------------------------------------------------+
+| Step 3: Financial Details                           |
+| +-----------------------------------------------+   |
+| | [Base Rent per Unit: Currency Input]           |   |
+| | [Security Deposit per Unit: Currency Input]   |   |
+| | [Owner Name]                                  |   |
+| | [Owner Contact: Email/Phone]                  |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (Apartment)                            |
+| [Step Indicator: 1 ● 2 ● 3 ● 4]                    |
++-----------------------------------------------------+
+| Step 4: Features & Units                            |
+| +-----------------------------------------------+   |
+| | [Avg Square Footage per Unit: Numeric Input]  |   |
+| | [Avg Bedrooms per Unit: Numeric Input]        |   |
+| | [Avg Bathrooms per Unit: Numeric Input]       |   |
+| | [Amenities: Multi-Select Checkbox]           |   |
+| |   - Parking [ ] Pool [ ] Gym [ ] Elevator    |   |
+| | [Description: Textarea]                      |   |
+| | [Upload Photos: File Input]                  |   |
+| | [ ] Auto-Generate Units (e.g., Apt 101-110)  |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Save Property]         |
++-----------------------------------------------------+
+
+
++-----------------------------------------------------+
+| Add Property                                        |
+| [Step Indicator: 1 ○ 2 ○ 3 ○ 4]                    |
++-----------------------------------------------------+
+| Step 1: Category Selection                         |
+| +-----------------------------------------------+   |
+| | [Property Category: Dropdown]                  |   |
+| |   - Apartment                                  |   |
+| |   - Hostel                                     |   |
+| |   - PG (Paying Guest)                         |   |
+| +-----------------------------------------------+   |
+| [Back: Disabled]          [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (Hostel)                               |
+| [Step Indicator: 1 ● 2 ○ 3 ○ 4]                    |
++-----------------------------------------------------+
+| Step 2: Basic Details                               |
+| +-----------------------------------------------+   |
+| | [Hostel Name]                                  |   |
+| | [Address Line 1]                               |   |
+| | [Address Line 2]                               |   |
+| | [City] [State] [Zip Code]                     |   |
+| | [Total Beds: Numeric Input]                   |   |
+| | [Rooms: Numeric Input]                        |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (Hostel)                               |
+| [Step Indicator: 1 ● 2 ● 3 ○ 4]                    |
++-----------------------------------------------------+
+| Step 3: Financial & Management                      |
+| +-----------------------------------------------+   |
+| | [Rent per Bed: Currency Input]                |   |
+| | [Security Deposit per Bed: Currency Input]   |   |
+| | [Manager Name]                                |   |
+| | [Manager Contact: Email/Phone]                |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Next]                  |
++-----------------------------------------------------+
+
++-----------------------------------------------------+
+| Add Property (Hostel)                               |
+| [Step Indicator: 1 ● 2 ● 3 ● 4]                    |
++-----------------------------------------------------+
+| Step 4: Features & Beds                             |
+| +-----------------------------------------------+   |
+| | [Total Square Footage: Numeric Input]         |   |
+| | [Shared Bathrooms: Numeric Input]            |   |
+| | [Amenities: Multi-Select Checkbox]           |   |
+| |   - Wi-Fi [ ] Kitchen [ ] Laundry [ ] Study  |   |
+| | [Description: Textarea]                      |   |
+| | [Upload Photos: File Input]                  |   |
+| | [ ] Auto-Generate Rooms (e.g., Room 1-10)    |   |
+| +-----------------------------------------------+   |
+| [Back]                    [Save Property]         |
++-----------------------------------------------------+

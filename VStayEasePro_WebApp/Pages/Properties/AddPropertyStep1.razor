@@ -1,0 +1,428 @@
+﻿@page "/add-property/step1-2"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+
+<div class="page-container">
+    <div class="form-container">
+        <div class="header">
+            <h2><i class="bi bi-house-add-fill"></i> Add Property</h2>
+            <div class="step-indicator">
+                <span class="step active">1-2</span>
+                <span class="step">3</span>
+            </div>
+        </div>
+        <EditForm Model="PropertyModel" OnValidSubmit="HandleNext" class="form-body">
+            <DataAnnotationsValidator />
+            <div class="form-layout">
+                <!-- Category Selection -->
+                <div class="form-section category-section">
+                    <h3>Category Selection</h3>
+                    <div class="form-group">
+                        <label for="propertyCategory">Property Category <span class="required">*</span></label>
+                        <InputSelect id="propertyCategory" @bind-Value="PropertyModel.Category" class="form-control" @oninput="UpdateCategoryLabel">
+                            <option value="">Select a category...</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="PG">PG (Paying Guest)</option>
+                        </InputSelect>
+                        <ValidationMessage For="() => PropertyModel.Category" />
+                    </div>
+                </div>
+                <!-- Basic Details -->
+                <div class="form-section details-section">
+                    <h3>Basic Details @CategoryLabel</h3>
+                    <div class="form-group">
+                        <label for="propertyName">@PropertyModel.Category Name <span class="required">*</span></label>
+                        <InputText id="propertyName" @bind-Value="PropertyModel.Name" class="form-control" />
+                        <ValidationMessage For="() => PropertyModel.Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="addressLine1">Address Line 1 <span class="required">*</span></label>
+                        <InputText id="addressLine1" @bind-Value="PropertyModel.AddressLine1" class="form-control" />
+                        <ValidationMessage For="() => PropertyModel.AddressLine1" />
+                    </div>
+                    <div class="form-group">
+                        <label for="addressLine2">Address Line 2</label>
+                        <InputText id="addressLine2" @bind-Value="PropertyModel.AddressLine2" class="form-control" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City <span class="required">*</span></label>
+                            <InputText id="city" @bind-Value="PropertyModel.City" class="form-control" />
+                            <ValidationMessage For="() => PropertyModel.City" />
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State <span class="required">*</span></label>
+                            <InputText id="state" @bind-Value="PropertyModel.State" class="form-control" />
+                            <ValidationMessage For="() => PropertyModel.State" />
+                        </div>
+                        <div class="form-group">
+                            <label for="zipCode">Zip Code <span class="required">*</span></label>
+                            <InputText id="zipCode" @bind-Value="PropertyModel.ZipCode" class="form-control" />
+                            <ValidationMessage For="() => PropertyModel.ZipCode" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalGuests">Total Guests/Capacity <span class="required">*</span></label>
+                        <InputNumber id="totalGuests" @bind-Value="PropertyModel.TotalGuests" class="form-control" />
+                        <ValidationMessage For="() => PropertyModel.TotalGuests" />
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <button type="button" class="btn btn-back" @onclick="HandleBack">Cancel</button>
+                <button type="submit" class="btn btn-next" disabled="@(!IsFormValid)">Next</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<style>
+    /* Page Container */
+    .page-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f9fafc 0%, #e6f0ff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+    }
+
+    /* Form Container */
+    .form-container {
+        background: #ffffff;
+        border-radius: 30px;
+        padding: 35px;
+        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 1200px;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+        .form-container:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+        }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+        .header h2 {
+            font-size: 2.2rem;
+            color: #1a202c;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header i {
+            color: #4299e1;
+            font-size: 2.3rem;
+        }
+
+    /* Step Indicator */
+    .step-indicator {
+        display: flex;
+        gap: 15px;
+    }
+
+    .step {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #718096;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+        .step.active {
+            background: #4299e1;
+            color: #ffffff;
+        }
+
+    /* Form Layout */
+    .form-layout {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+    .form-section {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .category-section {
+        max-width: 400px;
+    }
+
+    .details-section {
+        flex-grow: 2;
+    }
+
+    .form-section h3 {
+        font-size: 1.6rem;
+        color: #2d3748;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+        .form-group label {
+            font-size: 1.1rem;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+    .required {
+        color: #e53e3e;
+        font-size: 1.3rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        font-size: 1rem;
+        color: #2d3748;
+        background: #f7fafc;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 10px rgba(66, 153, 225, 0.3);
+            outline: none;
+        }
+
+    .validation-message {
+        color: #e53e3e;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+    /* Footer */
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 35px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-back {
+        background: #e2e8f0;
+        color: #718096;
+    }
+
+    .btn-next {
+        background: #4299e1;
+        color: #ffffff;
+    }
+
+    .btn:disabled {
+        background: #cbd5e0;
+        color: #a0aec0;
+        cursor: not-allowed;
+    }
+
+    .btn:not(:disabled):hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-next:not(:disabled):hover {
+        background: #3182ce;
+    }
+
+    /* Decorative Elements */
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(66, 153, 225, 0.25) 0%, rgba(66, 153, 225, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    /* Animations */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .form-container {
+            max-width: 90%;
+            padding: 25px;
+        }
+
+        .form-layout {
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .category-section, .details-section {
+            max-width: 100%;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .header h2 {
+            font-size: 1.8rem;
+        }
+
+        .header i {
+            font-size: 2rem;
+        }
+
+        .step {
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+        }
+
+        .form-section h3 {
+            font-size: 1.4rem;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            font-size: 1rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .form-row {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group label {
+            font-size: 1rem;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+@code {
+    private PropertyAddModel PropertyModel { get; set; } = new();
+    private string CategoryLabel => string.IsNullOrEmpty(PropertyModel.Category) ? "" : $"for {PropertyModel.Category}";
+
+    private bool IsFormValid => !string.IsNullOrEmpty(PropertyModel.Category) &&
+                               !string.IsNullOrEmpty(PropertyModel.Name) &&
+                               !string.IsNullOrEmpty(PropertyModel.AddressLine1) &&
+                               !string.IsNullOrEmpty(PropertyModel.City) &&
+                               !string.IsNullOrEmpty(PropertyModel.State) &&
+                               !string.IsNullOrEmpty(PropertyModel.ZipCode) &&
+                               PropertyModel.TotalGuests > 0;
+
+    private void UpdateCategoryLabel(ChangeEventArgs e)
+    {
+        StateHasChanged(); // Refresh UI to update label dynamically
+    }
+
+    private void HandleNext()
+    {
+        string nextPage = PropertyModel.Category switch
+        {
+            "Apartment" => "/add-property/apartment/step3",
+            "Hostel" => "/add-property/hostel/step3",
+            "PG" => "/add-property/pg/step3",
+            _ => "/add-property/step1-2" // Fallback
+        };
+        Navigation.NavigateTo(nextPage);
+    }
+
+    private void HandleBack()
+    {
+        Navigation.NavigateTo("/dashboard"); // Replace with your dashboard route
+    }
+
+    public class PropertyAddModel
+    {
+        [Required(ErrorMessage = "Please select a property category.")]
+        public string Category { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Property name is required.")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Address Line 1 is required.")]
+        public string AddressLine1 { get; set; } = string.Empty;
+
+        public string AddressLine2 { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "City is required.")]
+        public string City { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "State is required.")]
+        public string State { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Zip Code is required.")]
+        public string ZipCode { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Total guests/capacity is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Total guests must be greater than 0.")]
+        public int TotalGuests { get; set; }
+    }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+}
