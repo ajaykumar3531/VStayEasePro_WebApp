@@ -149,26 +149,25 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 40px;
+        padding: 30px;
     }
 
     /* Form Container */
     .form-container {
         background: #ffffff;
-        border-radius: 35px;
-        padding: 40px;
-        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.08);
+        border-radius: 25px; /* Slightly smaller radius for elegance */
+        padding: 30px; /* Reduced padding for compactness */
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); /* Softer shadow */
         width: 100%;
-        max-width: 1000px;
+        max-width: 1100px; /* Consistent with PG Step 3 */
         position: relative;
         overflow: hidden;
-        animation: fadeIn 0.6s ease-in-out;
-        border: 1px solid rgba(66, 153, 225, 0.1);
+        animation: fadeIn 0.5s ease-in-out;
     }
 
         .form-container:hover {
-            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.1);
-            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1); /* Subtle hover lift */
+            transform: translateY(-3px); /* Gentle lift */
             transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
 
@@ -177,20 +176,19 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 35px;
+        margin-bottom: 25px; /* Reduced for tighter layout */
     }
 
         .header h2 {
-            font-size: 2.4rem;
+            font-size: 1.9rem; /* Smaller, less overwhelming */
             color: #1a202c;
-            font-weight: 800;
+            font-weight: 700;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 18px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            background: linear-gradient(90deg, #1a202c, #4299e1);
+            gap: 12px; /* Smaller gap */
+            letter-spacing: 0.3px; /* Subtle spacing */
+            background: linear-gradient(90deg, #1a202c, #4299e1); /* Gradient text */
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -198,52 +196,51 @@
 
         .header i {
             color: #4299e1;
-            font-size: 2.5rem;
-            filter: drop-shadow(0 2px 4px rgba(66, 153, 225, 0.3));
+            font-size: 2rem; /* Slightly smaller icon */
+            filter: drop-shadow(0 2px 3px rgba(66, 153, 225, 0.2)); /* Softer shadow */
         }
 
     /* Step Indicator */
     .step-indicator {
         display: flex;
-        gap: 18px;
+        gap: 12px; /* Smaller gap */
     }
 
     .step {
-        width: 40px;
-        height: 40px;
+        width: 30px; /* Smaller circles */
+        height: 30px;
         border-radius: 50%;
         background: #e2e8f0;
         color: #718096;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 1.2rem;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        border: 2px solid #d1d8e0;
+        font-size: 1rem; /* Smaller text */
+        font-weight: 600;
+        transition: background 0.3s ease, color 0.3s ease;
+        border: 1px solid #d1d8e0; /* Subtle border */
     }
 
         .step.active {
             background: #4299e1;
             color: #ffffff;
-            border: 2px solid #3182ce;
-            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+            box-shadow: 0 3px 8px rgba(66, 153, 225, 0.3); /* Glow effect */
         }
 
     /* Form Layout */
     .form-layout {
         display: flex;
         flex-direction: column;
-        gap: 25px;
+        gap: 20px; /* Consistent with compact design */
     }
 
     .form-section h3 {
-        font-size: 1.8rem;
+        font-size: 1.4rem; /* Smaller, less bulky */
         color: #2d3748;
-        margin-bottom: 25px;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-        background: linear-gradient(90deg, #2d3748, #718096);
+        margin-bottom: 15px; /* Tighter spacing */
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        background: linear-gradient(90deg, #2d3748, #718096); /* Gradient text */
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -251,119 +248,117 @@
 
     /* Form Group */
     .form-group {
-        margin-bottom: 30px;
+        margin-bottom: 20px; /* Reduced for tighter layout */
     }
 
         .form-group label {
-            font-size: 1.2rem;
+            font-size: 1rem; /* Smaller, cleaner */
             color: #4a5568;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-weight: 500;
+            margin-bottom: 6px; /* Reduced spacing */
             display: block;
-            letter-spacing: 0.2px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            letter-spacing: 0.1px;
         }
 
     .required {
         color: #e53e3e;
-        font-size: 1.4rem;
+        font-size: 1.2rem; /* Slightly smaller */
         font-weight: bold;
     }
 
     .form-control {
         width: 100%;
-        padding: 14px 18px;
+        padding: 10px 14px; /* Smaller padding for compactness */
         border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        font-size: 1.1rem;
+        border-radius: 12px; /* Softer, smaller radius */
+        font-size: 0.95rem; /* Smaller text */
         color: #2d3748;
-        background: #f9fbfc;
-        transition: all 0.3s ease;
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+        background: #f9fbfc; /* Lighter background */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03); /* Subtle inset */
     }
 
         .form-control:focus {
             border-color: #4299e1;
-            box-shadow: 0 0 12px rgba(66, 153, 225, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.03);
-            background: #ffffff;
+            box-shadow: 0 0 8px rgba(66, 153, 225, 0.3); /* Smaller focus glow */
+            background: #ffffff; /* Brightens on focus */
         }
 
     .validation-message {
         color: #e53e3e;
-        font-size: 0.95rem;
-        margin-top: 8px;
+        font-size: 0.85rem; /* Smaller for subtlety */
+        margin-top: 5px;
         font-style: italic;
     }
 
     /* Floor Configuration */
     .floor-config {
-        margin: 25px 0;
-        padding: 25px;
-        background: linear-gradient(135deg, #f7fafc 0%, #eef2ff 100%);
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        margin: 20px 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #f7fafc 0%, #eef2ff 100%); /* Gradient for depth */
+        border-radius: 15px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05); /* Softer shadow */
     }
 
         .floor-config h4 {
-            font-size: 1.6rem;
+            font-size: 1.3rem; /* Smaller for balance */
             color: #2d3748;
-            margin-bottom: 20px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-
-    .floor-section {
-        margin-bottom: 25px;
-        padding: 20px;
-        background: #ffffff;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        border: 1px solid rgba(66, 153, 225, 0.1);
-    }
-
-        .floor-section h5 {
-            font-size: 1.3rem;
-            color: #4a5568;
-            margin-bottom: 15px;
+            margin-bottom: 12px; /* Tighter spacing */
             font-weight: 600;
             letter-spacing: 0.2px;
         }
 
-    .unit-details {
-        margin: 15px 0;
+    .floor-section {
+        margin-bottom: 20px;
         padding: 15px;
-        border: 2px dashed #d1d8e0;
-        border-radius: 15px;
+        background: #ffffff;
+        border-radius: 12px; /* Slightly larger radius */
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06); /* Subtle shadow */
+        border: 1px solid rgba(66, 153, 225, 0.1); /* Light accent */
+    }
+
+        .floor-section h5 {
+            font-size: 1.1rem; /* Smaller for hierarchy */
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1px;
+        }
+
+    .unit-details {
+        margin: 10px 0;
+        padding: 12px; /* Slightly larger for comfort */
+        border: 2px dashed #d1d8e0; /* Thicker dashed border */
+        border-radius: 12px; /* Softer corners */
         background: #f9fbfc;
         transition: background 0.3s ease;
     }
 
         .unit-details:hover {
-            background: #f1f5f9;
+            background: #f1f5f9; /* Subtle hover effect */
         }
 
     .form-row {
         display: flex;
-        gap: 20px;
+        gap: 15px; /* Reduced gap */
         flex-wrap: wrap;
     }
 
         .form-row .form-group {
             flex: 1;
-            min-width: 160px;
+            min-width: 140px; /* Slightly smaller */
         }
 
     /* Buttons */
     .btn-add, .btn-add-floor, .btn-remove {
-        padding: 10px 20px;
+        padding: 8px 16px; /* Compact but balanced */
         border: none;
-        border-radius: 12px;
-        font-size: 1rem;
-        font-weight: 600;
+        border-radius: 10px;
+        font-size: 0.9rem; /* Consistent size */
+        font-weight: 500;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     }
 
     .btn-add {
@@ -379,12 +374,12 @@
     .btn-remove {
         background: #e53e3e;
         color: #ffffff;
-        padding: 8px 12px;
+        padding: 6px 10px; /* Smaller for remove button */
     }
 
         .btn-add:hover, .btn-add-floor:hover, .btn-remove:hover {
-            transform: scale(1.08);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Slightly larger shadow */
         }
 
     .btn-add:hover {
@@ -402,33 +397,33 @@
     /* Amenities & Security Features */
     .amenities, .security-features {
         display: flex;
-        gap: 25px;
+        gap: 20px; /* Slightly reduced */
         flex-wrap: wrap;
-        padding: 10px 0;
+        padding: 8px 0; /* Smaller padding */
     }
 
         .amenities input[type="checkbox"], .security-features input[type="checkbox"] {
-            margin-right: 8px;
-            accent-color: #4299e1;
-            transform: scale(1.2);
+            margin-right: 6px;
+            accent-color: #4299e1; /* Blue checkboxes */
+            transform: scale(1.1); /* Slightly smaller scale */
         }
 
     /* Footer */
     .footer {
         display: flex;
         justify-content: space-between;
-        margin-top: 40px;
+        margin-top: 30px; /* Slightly reduced */
     }
 
     .btn {
-        padding: 14px 35px;
+        padding: 10px 25px; /* Smaller, less bulky */
         border: none;
-        border-radius: 20px;
-        font-size: 1.2rem;
-        font-weight: 600;
+        border-radius: 12px; /* Softer corners */
+        font-size: 1rem; /* Smaller text */
+        font-weight: 500;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     }
 
     .btn-back {
@@ -449,8 +444,8 @@
     }
 
     .btn:not(:disabled):hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        transform: translateY(-3px); /* Smaller lift */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Softer hover shadow */
     }
 
     .btn-save:not(:disabled):hover {
@@ -465,11 +460,11 @@
     .form-container::before {
         content: '';
         position: absolute;
-        top: -100px;
-        right: -100px;
-        width: 220px;
-        height: 220px;
-        background: radial-gradient(circle, rgba(66, 153, 225, 0.3) 0%, rgba(66, 153, 225, 0) 70%);
+        top: -70px; /* Smaller */
+        right: -70px;
+        width: 160px; /* Smaller decorative circle */
+        height: 160px;
+        background: radial-gradient(circle, rgba(66, 153, 225, 0.25) 0%, rgba(66, 153, 225, 0) 70%);
         border-radius: 50%;
         z-index: 0;
     }
@@ -478,7 +473,7 @@
     @@keyframes fadeIn {
         from {
             opacity: 0;
-            transform: translateY(40px);
+            transform: translateY(20px); /* Smaller slide */
         }
 
         to {
@@ -491,40 +486,40 @@
     @@media (max-width: 768px) {
         .form-container {
             max-width: 90%;
-            padding: 30px;
+            padding: 20px; /* Reduced padding */
         }
 
         .header h2 {
-            font-size: 2rem;
+            font-size: 1.6rem; /* Smaller for tablets */
         }
 
         .header i {
-            font-size: 2.2rem;
+            font-size: 1.8rem; /* Smaller icon */
         }
 
         .step {
-            width: 35px;
-            height: 35px;
-            font-size: 1.1rem;
+            width: 25px; /* Smaller circles */
+            height: 25px;
+            font-size: 0.9rem;
         }
 
         .form-section h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem; /* Smaller */
         }
 
         .form-row {
             flex-direction: column;
-            gap: 15px;
+            gap: 12px; /* Smaller gap */
         }
 
         .btn {
-            padding: 12px 30px;
-            font-size: 1.1rem;
+            padding: 8px 20px; /* Smaller buttons */
+            font-size: 0.95rem;
         }
 
         .btn-add, .btn-add-floor, .btn-remove {
-            padding: 8px 18px;
-            font-size: 0.95rem;
+            padding: 6px 14px; /* Smaller for dynamic buttons */
+            font-size: 0.85rem;
         }
     }
 
@@ -532,20 +527,15 @@
         .header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 20px;
+            gap: 12px; /* Smaller gap */
         }
 
         .form-group label {
-            font-size: 1.1rem;
+            font-size: 0.95rem; /* Smaller */
         }
 
         .form-control {
-            font-size: 1rem;
-        }
-
-        .btn {
-            padding: 10px 25px;
-            font-size: 1rem;
+            font-size: 0.9rem; /* Smaller text */
         }
     }
 </style>

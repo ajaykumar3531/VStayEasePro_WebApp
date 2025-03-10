@@ -90,18 +90,20 @@
     /* Form Container */
     .form-container {
         background: #ffffff;
-        border-radius: 30px;
-        padding: 35px;
-        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.1);
+        border-radius: 25px; /* Slightly smaller radius for elegance */
+        padding: 30px; /* Reduced padding for a compact feel */
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); /* Softer shadow */
         width: 100%;
-        max-width: 1200px;
+        max-width: 1100px; /* Slightly smaller max-width */
         position: relative;
         overflow: hidden;
         animation: fadeIn 0.5s ease-in-out;
     }
 
         .form-container:hover {
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1); /* Subtle hover lift */
+            transform: translateY(-3px); /* Gentle lift */
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
 
     /* Header */
@@ -109,63 +111,71 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
+        margin-bottom: 25px; /* Reduced for tighter layout */
     }
 
         .header h2 {
-            font-size: 2.2rem;
+            font-size: 1.9rem; /* Smaller, less overwhelming */
             color: #1a202c;
             font-weight: 700;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px; /* Smaller gap */
+            letter-spacing: 0.3px; /* Subtle spacing */
+            background: linear-gradient(90deg, #1a202c, #4299e1); /* Gradient text */
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .header i {
             color: #4299e1;
-            font-size: 2.3rem;
+            font-size: 2rem; /* Slightly smaller icon */
+            filter: drop-shadow(0 2px 3px rgba(66, 153, 225, 0.2)); /* Softer shadow */
         }
 
     /* Step Indicator */
     .step-indicator {
         display: flex;
-        gap: 15px;
+        gap: 12px; /* Smaller gap */
     }
 
     .step {
-        width: 35px;
-        height: 35px;
+        width: 30px; /* Smaller circles */
+        height: 30px;
         border-radius: 50%;
         background: #e2e8f0;
         color: #718096;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 1.1rem;
+        font-size: 1rem; /* Smaller text */
         font-weight: 600;
         transition: background 0.3s ease, color 0.3s ease;
+        border: 1px solid #d1d8e0; /* Subtle border */
     }
 
         .step.active {
             background: #4299e1;
             color: #ffffff;
+            box-shadow: 0 3px 8px rgba(66, 153, 225, 0.3); /* Glow effect */
         }
 
     /* Form Layout */
     .form-layout {
         display: flex;
-        gap: 40px;
+        gap: 30px; /* Reduced gap for compactness */
         flex-wrap: wrap;
     }
 
     .form-section {
         flex: 1;
-        min-width: 300px;
+        min-width: 280px; /* Slightly smaller min-width */
     }
 
     .category-section {
-        max-width: 400px;
+        max-width: 350px; /* Reduced for balance */
     }
 
     .details-section {
@@ -173,78 +183,89 @@
     }
 
     .form-section h3 {
-        font-size: 1.6rem;
+        font-size: 1.4rem; /* Smaller, less bulky */
         color: #2d3748;
-        margin-bottom: 20px;
+        margin-bottom: 15px; /* Tighter spacing */
         font-weight: 600;
+        letter-spacing: 0.2px;
+        background: linear-gradient(90deg, #2d3748, #718096); /* Gradient text */
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
     }
 
+    /* Form Group */
     .form-group {
-        margin-bottom: 25px;
+        margin-bottom: 20px; /* Reduced for tighter layout */
     }
 
         .form-group label {
-            font-size: 1.1rem;
+            font-size: 1rem; /* Smaller, cleaner */
             color: #4a5568;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* Reduced spacing */
             display: block;
+            letter-spacing: 0.1px;
         }
 
     .required {
         color: #e53e3e;
-        font-size: 1.3rem;
+        font-size: 1.2rem; /* Slightly smaller */
+        font-weight: bold;
     }
 
     .form-control {
         width: 100%;
-        padding: 12px 15px;
+        padding: 10px 14px; /* Smaller padding for compactness */
         border: 1px solid #e2e8f0;
-        border-radius: 15px;
-        font-size: 1rem;
+        border-radius: 12px; /* Softer, smaller radius */
+        font-size: 0.95rem; /* Smaller text */
         color: #2d3748;
-        background: #f7fafc;
+        background: #f9fbfc; /* Lighter background */
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03); /* Subtle inset */
     }
 
         .form-control:focus {
             border-color: #4299e1;
-            box-shadow: 0 0 10px rgba(66, 153, 225, 0.3);
-            outline: none;
+            box-shadow: 0 0 8px rgba(66, 153, 225, 0.3); /* Smaller focus glow */
+            background: #ffffff; /* Brightens on focus */
         }
 
     .validation-message {
         color: #e53e3e;
-        font-size: 0.9rem;
-        margin-top: 6px;
+        font-size: 0.85rem; /* Smaller for subtlety */
+        margin-top: 5px;
+        font-style: italic;
     }
 
     .form-row {
         display: flex;
-        gap: 20px;
+        gap: 15px; /* Reduced gap */
         flex-wrap: wrap;
     }
 
         .form-row .form-group {
             flex: 1;
-            min-width: 150px;
+            min-width: 140px; /* Slightly smaller */
         }
 
     /* Footer */
     .footer {
         display: flex;
         justify-content: space-between;
-        margin-top: 35px;
+        margin-top: 30px; /* Slightly reduced */
     }
 
     .btn {
-        padding: 12px 30px;
+        padding: 10px 25px; /* Smaller, less bulky buttons */
         border: none;
-        border-radius: 15px;
-        font-size: 1.1rem;
+        border-radius: 12px; /* Softer corners */
+        font-size: 1rem; /* Smaller text */
         font-weight: 500;
         cursor: pointer;
         transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     }
 
     .btn-back {
@@ -261,25 +282,30 @@
         background: #cbd5e0;
         color: #a0aec0;
         cursor: not-allowed;
+        box-shadow: none;
     }
 
     .btn:not(:disabled):hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px); /* Smaller lift */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Softer hover shadow */
     }
 
     .btn-next:not(:disabled):hover {
         background: #3182ce;
     }
 
+    .btn-back:not(:disabled):hover {
+        background: #d1d8e0;
+    }
+
     /* Decorative Elements */
     .form-container::before {
         content: '';
         position: absolute;
-        top: -80px;
-        right: -80px;
-        width: 180px;
-        height: 180px;
+        top: -70px; /* Slightly smaller */
+        right: -70px;
+        width: 160px; /* Smaller decorative circle */
+        height: 160px;
         background: radial-gradient(circle, rgba(66, 153, 225, 0.25) 0%, rgba(66, 153, 225, 0) 70%);
         border-radius: 50%;
         z-index: 0;
@@ -289,7 +315,7 @@
     @@keyframes fadeIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px); /* Smaller slide */
         }
 
         to {
@@ -302,12 +328,12 @@
     @@media (max-width: 1024px) {
         .form-container {
             max-width: 90%;
-            padding: 25px;
+            padding: 20px; /* Reduced padding */
         }
 
         .form-layout {
             flex-direction: column;
-            gap: 30px;
+            gap: 25px; /* Slightly reduced */
         }
 
         .category-section, .details-section {
@@ -317,26 +343,26 @@
 
     @@media (max-width: 768px) {
         .header h2 {
-            font-size: 1.8rem;
+            font-size: 1.6rem; /* Smaller for tablets */
         }
 
         .header i {
-            font-size: 2rem;
+            font-size: 1.8rem; /* Smaller icon */
         }
 
         .step {
-            width: 30px;
-            height: 30px;
-            font-size: 1rem;
+            width: 25px; /* Smaller circles */
+            height: 25px;
+            font-size: 0.9rem;
         }
 
         .form-section h3 {
-            font-size: 1.4rem;
+            font-size: 1.3rem; /* Smaller */
         }
 
         .btn {
-            padding: 10px 25px;
-            font-size: 1rem;
+            padding: 8px 20px; /* Smaller buttons */
+            font-size: 0.95rem;
         }
     }
 
@@ -344,20 +370,20 @@
         .header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 15px;
+            gap: 12px; /* Smaller gap */
         }
 
         .form-row {
             flex-direction: column;
-            gap: 15px;
+            gap: 12px; /* Smaller gap */
         }
 
         .form-group label {
-            font-size: 1rem;
+            font-size: 0.95rem; /* Smaller */
         }
 
         .form-control {
-            font-size: 0.9rem;
+            font-size: 0.9rem; /* Smaller text */
         }
     }
 </style>
